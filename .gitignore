@@ -9,4 +9,11 @@
 /build/
 /vendor/
 /bin/
+/.idea/
 /composer.phar
+### Vagrant template
+.vagrant/
+### Redis template
+# Ignore redis binary dump (dump.rdb) files
+
+*.rdb
