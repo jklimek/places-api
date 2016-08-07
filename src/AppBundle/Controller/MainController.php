@@ -31,8 +31,19 @@ class MainController extends Controller
 
         $responseJson = $res->getBody();
         $responseBody = GuzzleHttp\json_decode($responseJson, true);
+        $places = [];
+        //TODO Make sure responseBody is valid
+        foreach ($responseBody["results"] as $place) {
+            // /places
+            $placeId = $place["place_id"];
+            $place["links"] = [
+                "href" => "/places/$placeId",
+                "rel" => "self"
+            ];
+            $places[] = $place;
+        }
 
-        return new JsonResponse($responseBody["results"]);
+        return new JsonResponse($places);
     }
 
 
