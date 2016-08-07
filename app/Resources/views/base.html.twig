@@ -2,12 +2,45 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
+        <meta name="Author" content="Jakub Klimek">
+        <meta name="viewport" content="width=device-width" />
+        <meta property="og:title"
+              content="Places API - Search for places around you" />
+
+        <title>{% block title %}Places API{% endblock %}</title>
+        {% block stylesheets %}
+            {#'%kernel.root_dir%/../vendor/semantic/ui/dist/semantic.min.css'#}
+            {#'%kernel.root_dir%/../vendor/fortawesome/font-awesome/css/font-awesome.min.css'#}
+            {% stylesheets filter='cssrewrite'
+            'https://code.jquery.com/ui/1.10.4/themes/flick/jquery-ui.css'
+            '%kernel.root_dir%/../vendor/twbs/bootstrap/dist/css/bootstrap.min.css'
+            '@AppBundle/Resources/web/css/custom.css'
+            '@AppBundle/Resources/web/css/jquery-ui.min.css'
+            'https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css'
+
+            %}
+            <link type="text/css" rel="stylesheet" href="{{ asset_url }}"/>
+            {% endstylesheets %}
+        {% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800,300italic' rel='stylesheet' type='text/css'>
+
     </head>
     <body>
         {% block body %}{% endblock %}
         {% block javascripts %}{% endblock %}
+
+        {#'%kernel.root_dir%/../vendor/semantic/ui/dist/semantic.min.js'#}
+        {#'//cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js'#}
+        {% javascripts output="js/app.js"
+        '@AppBundle/Resources/web/js/jquery-2.1.4.min.js'
+        '%kernel.root_dir%/../vendor/twbs/bootstrap/dist/js/bootstrap.min.js'
+        '@AppBundle/Resources/web/js/custom.js'
+
+
+        %}
+        <script src="{{ asset_url }}"></script>
+
+        {% endjavascripts %}
     </body>
 </html>

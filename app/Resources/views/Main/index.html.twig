@@ -1,8 +1,0 @@
-{% extends 'base.html.twig' %}
-
-{% block body %}
-
-    {% for place in response_body %}
-        <h4>{{ place.name }}: <a href="{{ path('place_details', {'place_id': place.place_id}) }}">{{ place.place_id }}</a></h4>
-    {% endfor %}
-{% endblock %}
