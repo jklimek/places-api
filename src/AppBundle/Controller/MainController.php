@@ -23,7 +23,7 @@ class MainController extends Controller
 //        $url = "http://0.0.0.0:8888/places";
         $options = [
             "location" => "54.348538,18.653228", // Default location - Neptune's Fountain
-            "radius" => 100,
+            "radius" => 2000,
             "type" => "bar", // Default type - bar
         ];
         $res = $client->request("GET", $url, ["query" => $options]);
