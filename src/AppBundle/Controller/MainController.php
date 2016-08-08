@@ -20,7 +20,7 @@ class MainController extends Controller
         $client = new GuzzleHttp\Client();
 
         $url = "http://places.klemens.ninja/places";
-        $url = "http://0.0.0.0:8888/places";
+//        $url = "http://0.0.0.0:8888/places";
         $options = [
             "location" => "54.348538,18.653228", // Default location - Neptune's Fountain
             "radius" => 2000,
