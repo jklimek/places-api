@@ -42,8 +42,32 @@
 
     <div class="container">
         <div class="row">
-            <h1>Bars nearby Neptune's Fountain in Gdańsk</h1>
+            <div class="col-lg-12">
+                <h3>Bars nearby Neptune's Fountain in Gdańsk</h3>
+            </div>
         </div>
+
+        {% for place in response %}
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="placeContainer">
+                        <img class="placePhoto" src="{{ place.links.photo.href }}" alt="">
+                        <div class="placeData">
+                            <h4>{{ place.name }}</h4>
+                            <p>{{ place.vicinity }}</p>
+                            {% if place.rating is defined %}
+                                <p>Rating: {{ place.rating }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+        {% endfor %}
+
+        {{ dump(response) }}
 
     </div>
 

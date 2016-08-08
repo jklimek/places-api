@@ -4,7 +4,23 @@ http://www.colourlovers.com/palette/629637/()
 
 */
 
-
 .geo-active {
     color: #FE4365;
+}
+
+.placeContainer {
+    margin: 10px 0 10px 0;
+}
+
+.placePhoto {
+    display: inline-block;
+}
+
+.placePhoto img {
+    position: absolute;
+    clip: rect(0px,60px,200px,0px);;
+}
+
+.placeData {
+    display: inline-block;
 }

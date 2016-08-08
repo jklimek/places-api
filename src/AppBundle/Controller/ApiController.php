@@ -43,16 +43,17 @@ class ApiController extends Controller
      * @Route("/places", name="places_default")
      * @return array
      */
-    public function placesAction() {
+    public function placesAction(Request $request) {
 
         $client = new GuzzleHttp\Client();
-
+        $radius = ($request->get("radius") != null) ? $request->get("radius") : 2000;
+        $type = ($request->get("type") != null) ? $request->get("type") : "bar";
         $apiKey = $this->getParameter("google_api_key");
         $url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
         $options = [
             "location" => "54.348538,18.653228", // Default location - Neptune's Fountain
-            "radius" => 2000,
-            "type" => "bar", // Default type - bar
+            "radius" => $radius,
+            "type" => $type, // Default type - bar
             "key" => $apiKey
         ];
         $res = $client->request("GET", $url, ["query" => $options]);
