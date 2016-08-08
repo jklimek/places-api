@@ -1,0 +1,7 @@
+services:
+    api.service.helpers:
+        class: AppBundle\Service\Helpers
+
+    api.exception_controller:
+        class: AppBundle\Controller\CustomExceptionController
+        arguments: ['@twig', '%kernel.debug%']
