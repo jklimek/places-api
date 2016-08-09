@@ -162,6 +162,7 @@ class PlacesController extends Controller {
                 "rating" => $responsePlace["rating"] ?? null,
                 "location" => $responsePlace["geometry"]["location"] ?? null,
                 "price_level" => $responsePlace["price_level"] ?? null,
+                "opening_hours" => $responsePlace["opening_hours"] ?? null,
                 "vicinity" => $responsePlace["vicinity"] ?? null,
             ];
 
@@ -245,7 +246,7 @@ class PlacesController extends Controller {
     private function preparePlacesRequestOptions($parameters) {
 
         $options = [
-            "location" => $parameters["location"], // Default location - Neptune's Fountain,
+            "location" => $parameters["location"],
             "radius"   => $parameters["radius"],
             "type"     => $parameters["type"],
             "rankby"   => $parameters["rankBy"],
