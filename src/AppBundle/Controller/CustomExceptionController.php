@@ -28,14 +28,19 @@ class CustomExceptionController extends ExceptionController
             case 404:
                 $errorMessage = "Resource not found.";
                 break;
+            case 0:
+                $code = 400;
+                $errorMessage = "$code Bad request. " . (Response::$statusTexts[$code] ?? '') . ".";
+                break;
             default:
                 $errorMessage = "$code " . (Response::$statusTexts[$code] ?? '') . ".";
         }
 
 
         return new JsonResponse([
+            'status'        => "ERROR",
             'error_message' => $errorMessage,
-            'code'    => $code,
+            'code'          => $code,
         ]);
     }
 }

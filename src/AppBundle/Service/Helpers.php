@@ -47,7 +47,7 @@ class Helpers {
      */
     public function sorter($sortingOrder) {
         // Return closure (cannot use class method along with use() construct in usort)
-        return function($placeA, $placeB) use ($sortingOrder) {
+        return function($elementA, $elementB) use ($sortingOrder) {
             // Keep
             while(!empty($sortingOrder)) {
                 $sortBy = array_shift($sortingOrder);
@@ -56,9 +56,9 @@ class Helpers {
                     $order = -$order;
                     $sortBy = substr($sortBy, 1);
                 }
-                if ($placeA[$sortBy] > $placeB[$sortBy]) {
+                if ($elementA[$sortBy] > $elementB[$sortBy]) {
                     return $order;
-                } elseif ($placeA[$sortBy] < $placeB[$sortBy]) {
+                } elseif ($elementA[$sortBy] < $elementB[$sortBy]) {
                     return -$order;
                 }
             }
