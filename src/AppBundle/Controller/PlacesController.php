@@ -26,12 +26,10 @@ class PlacesController extends Controller {
                 throw new \Exception("Method not allowed. This resource is handled via GET method.", 405);
             }
 
-            $url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
-
             // Parameters
             $parameters = $this->preparePlacesRequestParameters($request);
             $options = $this->preparePlacesRequestOptions($parameters);
-            $responseBody = $this->get('api.requests.service')->makeJsonRequest($url, $options);
+            $responseBody = $this->get('api.requests.service')->makeJsonRequest($this->getParameter('google_places_url'), $options);
             $places = $this->buildPlacesArray($responseBody, $parameters);
 
             // Sort places array if requested
@@ -79,8 +77,7 @@ class PlacesController extends Controller {
                 "key" => $this->getParameter("google_api_key"),
 //                "key" => $request->get("key"),
             ];
-            $url = "https://maps.googleapis.com/maps/api/place/details/json";
-            $responseBody = $this->get('api.requests.service')->makeJsonRequest($url, $options);
+            $responseBody = $this->get('api.requests.service')->makeJsonRequest($this->getParameter('google_place_details_url'), $options);
             $placeArray = $this->buildSinglePlaceArray($responseBody);
 
             // Build final response body
