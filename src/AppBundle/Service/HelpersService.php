@@ -9,7 +9,7 @@
 namespace AppBundle\Service;
 
 
-class Helpers {
+class HelpersService {
 
     /**
      * Function to calculate distance between two points (latitude, longitude)

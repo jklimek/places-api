@@ -1,7 +1,15 @@
 services:
     api.service.helpers:
-        class: AppBundle\Service\Helpers
+        class: AppBundle\Service\HelpersService
 
     api.exception_controller:
         class: AppBundle\Controller\CustomExceptionController
         arguments: ['@twig', '%kernel.debug%']
+
+    api.requests.service:
+        class: AppBundle\Service\RequestsService
+        arguments: ['@api.guzzle.service']
+
+    api.guzzle.service:
+        class: GuzzleHttp\Client
+        public: false

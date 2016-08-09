@@ -6,7 +6,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use GuzzleHttp;
+//use GuzzleHttp;
 
 /**
  * Rest controller for places
@@ -26,18 +26,17 @@ class PlacesController extends Controller {
                 throw new \Exception("Method not allowed. This resource is handled via GET method.", 405);
             }
 
-            $client = new GuzzleHttp\Client();
             $url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
 
             // Parameters
-            $parameters = $this->prepareParameters($request);
+            $parameters = $this->preparePlacesRequestParameters($request);
             $options = $this->preparePlacesRequestOptions($parameters);
-            $responseBody = $this->makeApiRequest($client, $url, $options);
+            $responseBody = $this->get('api.requests.service')->makeJsonRequest($url, $options);
             $places = $this->buildPlacesArray($responseBody, $parameters);
 
             // Sort places array if requested
             if (!is_null($parameters["sort"]) && is_string($parameters["sort"])) {
-                $places = $this->sortByParameters($places, $parameters);
+                $places = $this->sortPlacesByParameters($places, $parameters);
             }
 
             // Build final response body
@@ -60,6 +59,83 @@ class PlacesController extends Controller {
             ]);
 
         }
+    }
+
+
+    /**
+     * @Route("/places/{placeId}", name="place_details")
+     * @param string $placeId
+     * @param Request $request
+     * @return array
+     */
+    public function placeDetailsAction($placeId, Request $request) {
+        try {
+            // Check if http method is valid (accepting only GET for this resource)
+            if (!$request->isMethod('GET')) {
+                throw new \Exception("Method not allowed. This resource is handled via GET method.", 405);
+            }
+            $options = [
+                "placeid" => $placeId,
+                "key" => $this->getParameter("google_api_key"),
+//                "key" => $request->get("key"),
+            ];
+            $url = "https://maps.googleapis.com/maps/api/place/details/json";
+            $responseBody = $this->get('api.requests.service')->makeJsonRequest($url, $options);
+            $placeArray = $this->buildSinglePlaceArray($responseBody);
+
+            // Build final response body
+            $resultBody = [];
+            $resultBody["results"] = $placeArray;
+            $resultBody["status"] = "OK";
+
+            return new JsonResponse($resultBody);
+
+
+        } catch (\Exception $exception) {
+
+            return new JsonResponse([
+                'status'        => "ERROR",
+                'error_message' => $exception->getMessage(),
+                'code'          => $exception->getCode(),
+            ]);
+
+        }
+    }
+
+    private function buildSinglePlaceArray($responseBody) {
+        $responseResult = $responseBody["result"];
+        $photos = [];
+        if (!empty($responseResult["photos"])) {
+            foreach ($responseResult["photos"] as $photo) {
+                $photos[] = [
+                    "height" => $photo["height"],
+                    "width" => $photo["width"],
+                    "link" => "/photos/".$photo["photo_reference"]
+                ];
+            }
+        }
+
+        $placeArray = [
+            "name" => $responseResult["name"] ?? null,
+            "place_id" => $responseResult["place_id"] ?? null,
+            "simple_address" => $responseResult["vicinity"] ?? null,
+            "formatted_address" => $responseResult["formatted_address"] ?? null,
+//            "address_components" => $responseResult["address_components"] ?? null,
+            "phone" => $responseResult["international_phone_number"] ?? null,
+            "photos" => $photos ?? null,
+            "rating" => $responseResult["rating"] ?? null,
+            "price_level" => $responseResult["price_level"] ?? null,
+            "location" => $responseResult["geometry"]["location"] ?? null,
+            "reviews" => $responseResult["reviews"] ?? null,
+            "types" => $responseResult["types"] ?? null,
+            "opening_hours" => $responseResult["opening_hours"] ?? null,
+            "google_maps_url" => $responseResult["url"] ?? null,
+            "website_url" => $responseResult["website"] ?? null,
+
+        ];
+
+        return $placeArray;
+//        return $responseBody;
     }
 
     private function buildPlacesArray($responseBody, $parameters) {
@@ -114,7 +190,7 @@ class PlacesController extends Controller {
         return $places;
     }
 
-    private function sortByParameters($places, $parameters) {
+    private function sortPlacesByParameters($places, $parameters) {
 
         $sortingOrder = explode(",", $parameters["sort"]);
         array_unique($sortingOrder);
@@ -124,32 +200,30 @@ class PlacesController extends Controller {
 
     }
 
-    private function prepareParameters(Request $request) {
+    private function preparePlacesRequestParameters(Request $request) {
         $defaults = [
-            "radius" => 2000, // Default radius - 2000m
-            "rankBy" => "prominence", // Default rank by prominence
-            "type" => "bar", // Default type - bar
-            "location" => "54.348538,18.653228", // Default location - Neptune's Fountain
+            "radius"        => 2000, // Default radius - 2000m
+            "rankBy"        => "prominence", // Default rank by prominence
+            "type"          => "bar", // Default type - bar
+            "location"      => "54.348538,18.653228", // Default location - Neptune's Fountain
             "nextPageToken" => null, // Next page token is not set as default - used to paginate
-            "name" => null, // Query for a name search
-            "sort" => null, // Sorting parameters
+            "name"          => null, // Query for a name search
+            "openNow"       => null, // Open fo business at the time query is sent
+            "sort"          => null, // Sorting parameters
         ];
 
         $parameters = [
-            "radius" => $request->get("radius") ?? $defaults["radius"],
-            "rankBy" => $request->get("rankby") ?? $defaults["rankBy"],
-            "type" => $request->get("type") ?? $defaults["type"],
-            "location" => $request->get("location") ?? $defaults["location"],
+            "radius"        => $request->get("radius") ?? $defaults["radius"],
+            "rankBy"        => $request->get("rankby") ?? $defaults["rankBy"],
+            "type"          => $request->get("type") ?? $defaults["type"],
+            "location"      => $request->get("location") ?? $defaults["location"],
             "nextPageToken" => $request->get("next_page_token") ?? $defaults["nextPageToken"],
-            "name" => $request->get("name") ?? $defaults["name"],
-            "sort" => $request->get("sort") ?? $defaults["sort"],
-            "key" => $this->getParameter("google_api_key"),
-//            "key" => $request->get("key"),
+            "name"          => $request->get("name") ?? $defaults["name"],
+            "openNow"       => $request->get("opennow") ?? $defaults["openNow"],
+            "sort"          => $request->get("sort") ?? $defaults["sort"],
+            "key"           => $this->getParameter("google_api_key"),
+//            "key"           => $request->get("key"),
         ];
-
-        if (empty($parameters["key"])) {
-            throw new \Exception("Missing Google Places API key", 401);
-        }
 
         return $parameters;
 
@@ -168,6 +242,9 @@ class PlacesController extends Controller {
         if ($parameters["nextPageToken"]) {
             $options["pagetoken"] = $parameters["nextPageToken"];
         }
+        if ($parameters["openNow"]) {
+            $options["opennow"] = $parameters["openNow"];
+        }
         if ($parameters["name"]) {
             $options["name"] = $parameters["name"];
         }
@@ -179,47 +256,6 @@ class PlacesController extends Controller {
         return $options;
     }
 
-    private function makeApiRequest(GuzzleHttp\Client $client, $url, $options) {
-        $responseJson = $client
-                            ->request("GET", $url, ["query" => $options])
-                            ->getBody();
-        $responseBody = GuzzleHttp\json_decode($responseJson, true);
-        if ($responseBody["status"] != "OK") {
-            throw new \Exception($responseBody["status"], 400);
-        }
-
-        return $responseBody;
-    }
-
-
-    /**
-     * @Route("/places/{place_id}", name="place_details")
-     * @param Request $request
-     * @return array
-     */
-    public function placeDetailsAction(Request $request) {
-        try {
-            $client = new GuzzleHttp\Client();
-            $options = [
-                "placeid" => $request->get("placeId"),
-                "key"     => $request->get("key")
-            ];
-            $url = "https://maps.googleapis.com/maps/api/place/details/json";
-            $responseBody = $this->makeApiRequest($client, $url, $options);
-
-            return new JsonResponse($responseBody["result"]);
-
-
-        } catch (\Exception $exception) {
-
-            return new JsonResponse([
-                'status'        => "ERROR",
-                'error_message' => $exception->getMessage(),
-                'code'          => $exception->getCode(),
-            ]);
-
-        }
-    }
 
 
 }
