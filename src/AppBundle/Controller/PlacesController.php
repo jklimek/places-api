@@ -40,13 +40,11 @@ class PlacesController extends Controller {
                 $places = $this->sortByParameters($places, $parameters);
             }
 
-            // Get new next_page_token
-            $nextPageToken = $responseBody["next_page_token"] ?? null;
-
             // Build final response body
             $resultBody = [];
-            if ($nextPageToken) {
-                $resultBody["next_page"] = "/places?next_page_token=$nextPageToken";
+            // Get next page token and uri
+            if ($responseBody["next_page_token"]) {
+                $resultBody["next_page"] = "/places?next_page_token=".$responseBody["next_page_token"];
             }
             $resultBody["results"] = $places;
             $resultBody["status"] = "OK";
@@ -71,9 +69,9 @@ class PlacesController extends Controller {
             $place = [];
             if (!isset($responsePlace["place_id"])) {
                 continue;
-            } else {
-                $placeId = $responsePlace["place_id"];
             }
+            $placeId = $responsePlace["place_id"];
+
             if (isset($responsePlace["photos"][0]["photo_reference"])) {
                 // Get first photo reference
                 $photoId = $responsePlace["photos"][0]["photo_reference"];
@@ -85,10 +83,13 @@ class PlacesController extends Controller {
                 ];
             }
 
-            $place["name"] = $responsePlace["name"];
-            $place["place_id"] = $placeId;
-            $place["rating"] = $responsePlace["rating"] ?? null;
-            $place["location"] = $responsePlace["geometry"]["location"] ?? null;
+            $place = [
+                "name" => $responsePlace["name"],
+                "place_id" => $placeId,
+                "rating" => $responsePlace["rating"] ?? null,
+                "location" => $responsePlace["geometry"]["location"] ?? null,
+            ];
+
 
             // To calculate distance from user to a place we need to use same format for distances
             // lat,long -> 54.348538,18.653228
@@ -124,18 +125,31 @@ class PlacesController extends Controller {
     }
 
     private function prepareParameters(Request $request) {
+        $defaults = [
+            "radius" => 2000, // Default radius - 2000m
+            "rankBy" => "prominence", // Default rank by prominence
+            "type" => "bar", // Default type - bar
+            "location" => "54.348538,18.653228", // Default location - Neptune's Fountain
+            "nextPageToken" => null, // Next page token is not set as default - used to paginate
+            "name" => null, // Query for a name search
+            "sort" => null, // Sorting parameters
+        ];
 
         $parameters = [
-            "radius" => $request->get("radius") ?? 2000, // Default radius - 2000m
-            "rankBy" => $request->get("rankby") ?? "prominence", // Default rank by prominence
-            "type" => $request->get("type") ?? "bar", // Default type - bar
-            "location" => $request->get("location") ?? "54.348538,18.653228", // Default location - Neptune's Fountain
-            "nextPageToken" => $request->get("next_page_token") ?? null, // Next page token is not set as default - used to paginate
-            "name" => $request->get("name") ?? null, // Query for a name search
-            "sort" => $request->get("sort") ?? null, // Sorting parameters
+            "radius" => $request->get("radius") ?? $defaults["radius"],
+            "rankBy" => $request->get("rankby") ?? $defaults["rankBy"],
+            "type" => $request->get("type") ?? $defaults["type"],
+            "location" => $request->get("location") ?? $defaults["location"],
+            "nextPageToken" => $request->get("next_page_token") ?? $defaults["nextPageToken"],
+            "name" => $request->get("name") ?? $defaults["name"],
+            "sort" => $request->get("sort") ?? $defaults["sort"],
             "key" => $this->getParameter("google_api_key"),
-//            "apiKey" => $request->get("key"),
+//            "key" => $request->get("key"),
         ];
+
+        if (empty($parameters["key"])) {
+            throw new \Exception("Missing Google Places API key", 401);
+        }
 
         return $parameters;
 
