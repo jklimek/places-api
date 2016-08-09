@@ -193,6 +193,12 @@ class PlacesController extends Controller {
 
         $sortingOrder = explode(",", $parameters["sort"]);
         array_unique($sortingOrder);
+        // Check if sorting arguments match existing fields
+        // Diffing sortingOrder with place keys
+        $extraFields = array_diff($sortingOrder, array_keys($places[0]));
+        if (!empty($extraFields)) {
+            throw new \Exception("Invalid sorting field(s): '". implode("', '", $extraFields) . "'", 400);
+        }
         usort($places, $this->get('api.service.helpers')->sorter($sortingOrder));
 
         return $places;
@@ -200,6 +206,8 @@ class PlacesController extends Controller {
     }
 
     private function preparePlacesRequestParameters(Request $request) {
+
+        $requestParameters = $request->query->all();
         $defaults = [
             "radius"        => 2000, // Default radius - 2000m
             "rankBy"        => "prominence", // Default rank by prominence
@@ -212,17 +220,23 @@ class PlacesController extends Controller {
         ];
 
         $parameters = [
-            "radius"        => $request->get("radius") ?? $defaults["radius"],
-            "rankBy"        => $request->get("rankby") ?? $defaults["rankBy"],
-            "type"          => $request->get("type") ?? $defaults["type"],
-            "location"      => $request->get("location") ?? $defaults["location"],
-            "nextPageToken" => $request->get("next_page_token") ?? $defaults["nextPageToken"],
-            "name"          => $request->get("name") ?? $defaults["name"],
-            "openNow"       => $request->get("opennow") ?? $defaults["openNow"],
-            "sort"          => $request->get("sort") ?? $defaults["sort"],
+            "radius"        => $requestParameters["radius"] ?? $defaults["radius"],
+            "rankBy"        => $requestParameters["rankby"] ?? $defaults["rankBy"],
+            "type"          => $requestParameters["type"] ?? $defaults["type"],
+            "location"      => $requestParameters["location"] ?? $defaults["location"],
+            "nextPageToken" => $requestParameters["next_page_token"] ?? $defaults["nextPageToken"],
+            "name"          => $requestParameters["name"] ?? $defaults["name"],
+            "openNow"       => $requestParameters["opennow"] ?? $defaults["openNow"],
+            "sort"          => $requestParameters["sort"] ?? $defaults["sort"],
             "key"           => $this->getParameter("google_api_key"),
-//            "key"           => $request->get("key"),
+//            "key"           => $requestParameters["key"],
         ];
+        // Check validity of all requested parameters
+        // Searching for extra parameters by diffing request parameters with defined parameters set
+        $extraParameters = array_diff(array_keys($requestParameters), array_keys($parameters));
+        if (!empty($extraParameters)) {
+            throw new \Exception("Invalid parameter(s): '". implode("', '", $extraParameters) . "'", 400);
+        }
 
         return $parameters;
 
