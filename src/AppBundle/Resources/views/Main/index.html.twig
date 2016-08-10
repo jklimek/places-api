@@ -1,74 +1,127 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="container">
-        <div class="row">
-            <nav class="navbar navbar-default">
-                <div class="container-fluid">
-                    <div class="navbar-header">
-                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </button>
-                        <a class="navbar-brand" href="/"><i class="fa fa-map-marker" aria-hidden="true"></i> Places API</a>
+    <nav>
+        <div class="container">
+
+            <div class="row">
+
+                <div class="col-sm-6">
+                    <a class="navbar-logo" href="/">
+                        <i class="fa fa-map-marker" aria-hidden="true"></i> Places API
+                    </a>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-container">
+                        <form action="/" class="form-inline">
+                            <select class="form-control" name="type">
+                                <option>bar</option>
+                                <option>restaurant</option>
+                                <option>cafe</option>
+                                <option>bakery</option>
+                            </select>
+                            <a id="geoLocationButton" class="btn btn-default" href="#" role="button"><i id="geoLocationIcon" class="fa fa-location-arrow fa-lg" aria-hidden="true"></i></a>
+                            <button type="submit" class="btn btn-default"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+                        </form>
                     </div>
+                </div>
 
-                    <!-- Collect the nav links, forms, and other content for toggling -->
-                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                                    {#<nav class="navbar navbar-default">#}
+                {#<div class="container-fluid">#}
+                {#<div class="navbar-header">#}
+                {#<button type="button" class="navbar-toggle collapsed"#}
+                {#data-toggle="collapse"#}
+                {#data-target="#bs-example-navbar-collapse-1"#}
+                {#aria-expanded="false">#}
+                {#<span class="sr-only">Toggle navigation</span>#}
+                {#<span class="icon-bar"></span>#}
+                {#<span class="icon-bar"></span>#}
+                {#<span class="icon-bar"></span>#}
+                {#</button>#}
+                {#<a class="navbar-brand" href="/"><i#}
+                {#class="fa fa-map-marker"#}
+                {#aria-hidden="true"></i> Places API</a>#}
+                {#</div>#}
 
-                        <ul class="nav navbar-nav navbar-right">
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-                                <ul class="dropdown-menu">
-                                    <li><a href="#">Action</a></li>
-                                    <li><a href="#">Another action</a></li>
-                                    <li><a href="#">Something else here</a></li>
-                                    <li role="separator" class="divider"></li>
-                                    <li><a href="#">Separated link</a></li>
-                                    <li role="separator" class="divider"></li>
-                                    <li><a href="#">One more separated link</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="#"><i class="fa fa-location-arrow fa-lg" aria-hidden="true"></i></a></li>
-                            <li><a href="#"><i class="fa fa-search" aria-hidden="true"></i> Search</a></li>
-                        </ul>
-                    </div><!-- /.navbar-collapse -->
-                </div><!-- /.container-fluid -->
-            </nav>
+                {#<!-- Collect the nav links, forms, and other content for toggling -->#}
+                {#<div class="collapse navbar-collapse"#}
+                {#id="bs-example-navbar-collapse-1">#}
+
+                {#<ul class="nav navbar-nav navbar-right">#}
+                {#<li class="dropdown">#}
+                {#<a href="#" class="dropdown-toggle"#}
+                {#data-toggle="dropdown" role="button"#}
+                {#aria-haspopup="true" aria-expanded="false">Dropdown#}
+                {#<span class="caret"></span></a>#}
+                {#<ul class="dropdown-menu">#}
+                {#<li><a href="#">Action</a></li>#}
+                {#<li><a href="#">Another action</a></li>#}
+                {#<li><a href="#">Something else here</a></li>#}
+                {#<li role="separator" class="divider"></li>#}
+                {#<li><a href="#">Separated link</a></li>#}
+                {#<li role="separator" class="divider"></li>#}
+                {#<li><a href="#">One more separated link</a>#}
+                {#</li>#}
+                {#</ul>#}
+                {#</li>#}
+                {#<li><a href="#"><i#}
+                {#class="fa fa-location-arrow fa-lg"#}
+                {#aria-hidden="true"></i></a></li>#}
+                {#<li><a href="#"><i class="fa fa-search"#}
+                {#aria-hidden="true"></i>#}
+                {#Search</a></li>#}
+                {#</ul>#}
+                {#</div><!-- /.navbar-collapse -->#}
+                {#</div><!-- /.container-fluid -->#}
+                {#</nav>#}
+            </div>
+
         </div>
-    </div>
+    </nav>
 
     <div class="container">
+        {#{{ dump(response) }}#}
         <div class="row">
             <div class="col-lg-12">
                 <h3>Bars nearby Neptune's Fountain in Gdańsk</h3>
+                <h5 id="locationTest"></h5>
             </div>
         </div>
+        <div class="row">
+            {% for place in response.results %}
 
-        {% for place in response %}
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="placeContainer">
-                        <img class="placePhoto" src="{{ place.links.photo.href }}" alt="">
-                        <div class="placeData">
-                            <h4>{{ place.name }}</h4>
-                            <p>{{ place.vicinity }}</p>
-                            {% if place.rating is defined %}
-                                <p>Rating: {{ place.rating }}</p>
+                <div class="col-md-4 col-sm-6 col-xs-12">
+                    <div class="place-container">
+                        <div class="place-photo">
+                            {#<img src="{{ place.links.photo.href }}?maxheight=100" alt="">#}
+                            <img height="100" width="100" src="http://www.laryssakim.com/sites/default/files/Because-at-the-end-we-all-go-on-the-same-placethumb.jpg" alt="">
+                        </div>
+
+                        <div class="place-data">
+                            <p class="place-name" title="{{ place.name }}">{{ place.name|truncate(20) }}</p>
+                            <p class="place-address">{{ place.vicinity }}</p>
+                            {% if place.rating is not null %}
+                                <p class="place-rating">Rating: {{ place.rating }}</p>
                             {% endif %}
                         </div>
                     </div>
-
-
+                </div>
+            {% endfor %}
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="place-container next-page-container">
+                    <p class="next-page-text">Next page »</p>
                 </div>
             </div>
-
-        {% endfor %}
-
-        {#{{ dump(response) }}#}
-
+        </div>
     </div>
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <p>Copyright © 2016 <a href="http://klemens.ninja" target="_blank">Jakub Klimek</a></p>
+                </div>
+            </div>
+        </div>
+    </footer>
 
 {% endblock %}

@@ -36,6 +36,11 @@ twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
     exception_controller: api.exception_controller:showAction
+services:
+    twig.extension.text:
+             class: Twig_Extensions_Extension_Text
+             tags:
+                 - { name: twig.extension }
 
 # Assetic Configuration
 assetic:
