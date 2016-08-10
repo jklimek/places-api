@@ -153,7 +153,7 @@ class PlacesController extends Controller {
 
                 // Additional HATEOAS photo link
                 $links["photo"] = [
-                    "href" => "/photos/$photoId",
+                    "href" => "/api/photos/$photoId",
                     "rel"  => "photo"
                 ];
             }
