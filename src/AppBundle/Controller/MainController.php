@@ -63,7 +63,7 @@ class MainController extends Controller
         ];
         $responseBody = $this->get('api.requests.service')->makeJsonRequest($url, $options);
 
-        dump($responseBody);
+//        dump($responseBody);
 
         return ["place" => $responseBody, "key" => $this->getParameter("google_api_key")];
     }
