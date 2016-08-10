@@ -1,9 +1,3 @@
-/*
-
-http://www.colourlovers.com/palette/629637/()
-
-*/
-
 
 html,body {
     font-family: 'Open Sans', sans-serif;
@@ -30,6 +24,12 @@ a {
 a:hover {
     color: #FE4365;
     text-decoration: none;
+}
+
+.mobile-search-button {
+    float: right;
+    padding: 15px 15px;
+    font-size: 2em;
 }
 
 .navbar-logo {
@@ -202,6 +202,10 @@ a:hover {
     border-left: 1px solid #C8C8A9;
 }
 
+.navigate-button {
+    display: none;
+}
+
 
 /** Gallery **/
 /** base by Oliver Knoblich (https://codepen.io/oknoblich/pen/ELfzd) **/
@@ -259,6 +263,24 @@ a:hover {
     clear: both;
 }
 
+.review-container {
+    border-bottom: 1px solid #83AF9B;
+    margin-bottom: 30px;
+}
+
+.review-author {
+    font-size: 1.2em;
+    color: #FE4365;
+    display: inline;
+}
+.review-date {
+    display: inline;
+}
+
+.review-text {
+    margin-top: 10px;
+}
+
 
 footer p {
     font-size: 0.8em;
@@ -266,3 +288,26 @@ footer p {
 }
 
 
+@media (max-device-width :760px) {
+
+    .form-container {
+        float: none;
+    }
+
+    .search-multiselect {
+        width: 78%;
+        display: inline;
+    }
+
+    .search-button-geolocation {
+        width: 20%;
+        float: right;
+        vertical-align: top;
+        display: inline;
+    }
+
+    .search-button-submit {
+        margin-top: 10px;
+        width: 100%;
+    }
+}
