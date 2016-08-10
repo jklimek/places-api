@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 class PhotosController extends Controller
 {
     /**
-     * @Route("/photos/{photoId}", name="photo")
+     * @Route("/photos/{photoId}", name="api_photo")
      * @param $photoId
      * @param Request $request
      * @return array

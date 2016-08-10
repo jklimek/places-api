@@ -52,7 +52,7 @@ a:hover {
     color: #FE4365;
 }
 
-.place-container {
+.listed-place-container {
 
     -webkit-transition: all 0.3s ease;
     -moz-transition: all 0.3s ease;
@@ -68,7 +68,7 @@ a:hover {
     border-radius: 4px;
 }
 
-.place-container:hover {
+.listed-place-container:hover {
 
     -webkit-transition: all 0.3s ease;
     -moz-transition: all 0.3s ease;
@@ -80,7 +80,7 @@ a:hover {
     text-decoration: none;
 }
 
-.place-photo {
+.listed-place-photo, .place-photo {
     margin-right: 10px;
     height: 100px;
     width: 100px;
@@ -90,7 +90,7 @@ a:hover {
     position: relative;
 }
 
-.place-photo img {
+.listed-place-photo>img, .place-photo>img {
     position: absolute;
     left: -1000%;
     right: -1000%;
@@ -101,19 +101,25 @@ a:hover {
     min-width: 100%;
 }
 
-.place-data {
+.listed-place-data {
     padding-left: 20px;
     padding-right: 10px;
 }
 
-.place-name {
+.listed-place-name {
     color: #4b4f5d;
     font-size: 1.2em;
     font-family: 'Open Sans', sans-serif;
     font-weight: 700;
 }
-.place-rating {
+
+.listed-place-address {
+    color: #4b4f5d;
+}
+
+.listed-place-rating {
     margin-top: 10px;
+    color: #4b4f5d;
 }
 
 .next-page-container {
@@ -129,7 +135,134 @@ a:hover {
 }
 
 
+
+/** Place details section **/
+
+.place-data-container{
+    width: 100%;
+    height:300px;
+    position:relative;
+}
+
+#map {
+    width: 100%;
+    height: 300px;
+}
+
+.place-cover {
+    position:absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width:100%;
+    background: linear-gradient(to bottom, rgba(131, 175, 155, 0), rgb(109, 109, 109));
+}
+
+.place-data {
+
+    padding-top: 120px;
+}
+
+.place-photo {
+    width: 140px;
+    height: 140px;
+    margin-left: 0px;
+}
+
+.place-name {
+    color: #ededed;
+    font-size: 3em;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 700;
+}
+
+.place-address, .place-rating {
+    color: #ededed;
+}
+
+.section-title {
+    color: #FC9D9A;
+    margin-bottom: 40px;
+}
+
+.sub-section {
+    margin-bottom: 20px;
+}
+
+.info-marker {
+    color: #83AF9B;
+}
+
+.info-text {
+    padding-left: 20px;
+    margin-bottom: 0;
+}
+
+.left-border {
+    border-left: 1px solid #C8C8A9;
+}
+
+
+/** Gallery **/
+/** base by Oliver Knoblich (https://codepen.io/oknoblich/pen/ELfzd) **/
+
+.gallery {
+    margin: 0 auto;
+    padding: 5px;
+}
+
+.gallery > div {
+    transition: .3s transform;
+    position: relative;
+    overflow: hidden;
+    float: left;
+    padding: 5px;
+    width: 110px;
+    height: 110px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.gallery > div > img {
+    position: absolute;
+    left: -1000%;
+    right: -1000%;
+    top: -1000%;
+    bottom: -1000%;
+    margin: auto;
+    min-height: 100%;
+    min-width: 100%;
+    height: 110px;
+    display: block;
+    transition: .1s transform;
+    transform: translateZ(0); /* hack */
+}
+
+.gallery > div:hover {
+    z-index: 1;
+    overflow: visible;
+    transition: .3s transform;
+}
+
+.gallery > div:hover > img {
+    transform: scale(2.4,2.4);
+    transition: .3s transform;
+}
+
+.cf:before, .cf:after {
+    display: table;
+    content: "";
+    line-height: 0;
+}
+
+.cf:after {
+    clear: both;
+}
+
+
 footer p {
     font-size: 0.8em;
     text-align: center;
 }
+
+

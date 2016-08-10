@@ -27,7 +27,9 @@
 
     </head>
     <body>
+        {% include '@App/Main/navBar.html.twig' %}
         {% block body %}{% endblock %}
+        {% include '@App/Main/footer.html.twig' %}
         {% block javascripts %}{% endblock %}
 
         {#'%kernel.root_dir%/../vendor/semantic/ui/dist/semantic.min.js'#}

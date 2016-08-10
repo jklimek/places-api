@@ -27,7 +27,9 @@ function displayPosition(position) {
     $("#geoLocationIcon").addClass("fa-location-arrow");
     $("#geoLocationIcon").removeClass("fa-spinner fa-pulse");
     $("#locationTest").text("Latitude: " + position.coords.latitude + ", Longitude: " + position.coords.longitude);
+    $("input[name=location]").val(position.coords.latitude + "," + position.coords.longitude);
 }
+
 function displayError(error) {
     $("#geoLocationIcon").addClass("fa-location-arrow");
     $("#geoLocationIcon").removeClass("fa-spinner fa-pulse");

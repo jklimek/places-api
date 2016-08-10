@@ -6,6 +6,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+
 //use GuzzleHttp;
 
 /**
@@ -14,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 class PlacesController extends Controller {
 
     /**
-     * @Route("/places", name="places_default")
+     * @Route("/places", name="api_places_default")
      * @param Request $request
      * @return array
      */
@@ -41,7 +42,7 @@ class PlacesController extends Controller {
             $resultBody = [];
             // Get next page token and uri
             if ($responseBody["next_page_token"]) {
-                $resultBody["next_page"] = "/places?next_page_token=".$responseBody["next_page_token"];
+                $resultBody["next_page"] = "/places?next_page_token=" . $responseBody["next_page_token"];
             }
             $resultBody["results"] = $places;
             $resultBody["status"] = "OK";
@@ -61,7 +62,7 @@ class PlacesController extends Controller {
 
 
     /**
-     * @Route("/places/{placeId}", name="place_details")
+     * @Route("/places/{placeId}", name="api_place_details")
      * @param string $placeId
      * @param Request $request
      * @return array
@@ -74,7 +75,7 @@ class PlacesController extends Controller {
             }
             $options = [
                 "placeid" => $placeId,
-                "key" => $this->getParameter("google_api_key"),
+                "key"     => $this->getParameter("google_api_key"),
 //                "key" => $request->get("key"),
             ];
             $responseBody = $this->get('api.requests.service')->makeJsonRequest($this->getParameter('google_place_details_url'), $options);
@@ -106,28 +107,28 @@ class PlacesController extends Controller {
             foreach ($responseResult["photos"] as $photo) {
                 $photos[] = [
                     "height" => $photo["height"],
-                    "width" => $photo["width"],
-                    "link" => "/photos/".$photo["photo_reference"]
+                    "width"  => $photo["width"],
+                    "link"   => "/photos/" . $photo["photo_reference"]
                 ];
             }
         }
 
         $placeArray = [
-            "name" => $responseResult["name"] ?? null,
-            "place_id" => $responseResult["place_id"] ?? null,
-            "simple_address" => $responseResult["vicinity"] ?? null,
+            "name"              => $responseResult["name"] ?? null,
+            "place_id"          => $responseResult["place_id"] ?? null,
+            "simple_address"    => $responseResult["vicinity"] ?? null,
             "formatted_address" => $responseResult["formatted_address"] ?? null,
 //            "address_components" => $responseResult["address_components"] ?? null,
-            "phone" => $responseResult["international_phone_number"] ?? null,
-            "photos" => $photos ?? null,
-            "rating" => $responseResult["rating"] ?? null,
-            "price_level" => $responseResult["price_level"] ?? null,
-            "location" => $responseResult["geometry"]["location"] ?? null,
-            "reviews" => $responseResult["reviews"] ?? null,
-            "types" => $responseResult["types"] ?? null,
-            "opening_hours" => $responseResult["opening_hours"] ?? null,
-            "google_maps_url" => $responseResult["url"] ?? null,
-            "website_url" => $responseResult["website"] ?? null,
+            "phone"             => $responseResult["international_phone_number"] ?? null,
+            "photos"            => $photos ?? null,
+            "rating"            => $responseResult["rating"] ?? null,
+            "price_level"       => $responseResult["price_level"] ?? null,
+            "location"          => $responseResult["geometry"]["location"] ?? null,
+            "reviews"           => $responseResult["reviews"] ?? null,
+            "types"             => $responseResult["types"] ?? null,
+            "opening_hours"     => $responseResult["opening_hours"] ?? null,
+            "google_maps_url"   => $responseResult["url"] ?? null,
+            "website_url"       => $responseResult["website"] ?? null,
 
         ];
 
@@ -157,13 +158,13 @@ class PlacesController extends Controller {
             }
 
             $place = [
-                "name" => $responsePlace["name"],
-                "place_id" => $placeId,
-                "rating" => $responsePlace["rating"] ?? null,
-                "location" => $responsePlace["geometry"]["location"] ?? null,
-                "price_level" => $responsePlace["price_level"] ?? null,
+                "name"          => $responsePlace["name"],
+                "place_id"      => $placeId,
+                "rating"        => $responsePlace["rating"] ?? null,
+                "location"      => $responsePlace["geometry"]["location"] ?? null,
+                "price_level"   => $responsePlace["price_level"] ?? null,
                 "opening_hours" => $responsePlace["opening_hours"] ?? null,
-                "vicinity" => $responsePlace["vicinity"] ?? null,
+                "vicinity"      => $responsePlace["vicinity"] ?? null,
             ];
 
 
@@ -198,7 +199,7 @@ class PlacesController extends Controller {
         // Diffing sortingOrder with place keys
         $extraFields = array_diff($sortingOrder, array_keys($places[0]));
         if (!empty($extraFields)) {
-            throw new \Exception("Invalid sorting field(s): '". implode("', '", $extraFields) . "'", 400);
+            throw new \Exception("Invalid sorting field(s): '" . implode("', '", $extraFields) . "'", 400);
         }
         usort($places, $this->get('api.service.helpers')->sorter($sortingOrder));
 
@@ -236,7 +237,7 @@ class PlacesController extends Controller {
         // Searching for extra parameters by diffing request parameters with defined parameters set
         $extraParameters = array_diff(array_keys($requestParameters), array_keys($parameters));
         if (!empty($extraParameters)) {
-            throw new \Exception("Invalid parameter(s): '". implode("', '", $extraParameters) . "'", 400);
+            throw new \Exception("Invalid parameter(s): '" . implode("', '", $extraParameters) . "'", 400);
         }
 
         return $parameters;
@@ -269,7 +270,6 @@ class PlacesController extends Controller {
 
         return $options;
     }
-
 
 
 }

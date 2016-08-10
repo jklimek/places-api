@@ -2,8 +2,170 @@
 
 {% block body %}
 
-    <h1>{{ place.name }}</h1>
-    {{ place.adr_address }}
+    {#<h1>{{ place.name }}</h1>#}
+    {#{{ place.adr_address }}#}
 
-    <a href="https://maps.google.com/maps/contrib/116407955096729427064/photos">18 Południk - Herbaciarnio-Kawiarnia Podróżnicza</a>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="place-data-container">
+                <div id="map"></div>
+                <div class="place-cover">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="place-data">
+                                    {% if place.results.photos.0.link is not null %}
+                                    <div class="place-photo">
+                                        <img src="{{ place.results.photos.0.link }}?maxheight=100" alt="">
+                                    </div>
+                                    {% endif %}
+                                    <h1 class="place-name">
+                                        {{ place.results.name }}
+                                    </h1>
+                                    <h4 class="place-address">{{ place.results.simple_address }}</h4>
+                                    <h4 class="place-rating">User rating: {{ place.results.rating }}</h4>
+                                    {#Open now?#}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h2 class="section-title">Info</h2>
+                {% if place.results.formatted_address is not null %}
+                <div class="row sub-section">
+                    <div class="col-xs-1">
+                        <i class="fa fa-2x fa-map-marker info-marker"
+                           aria-hidden="true"></i>
+                    </div>
+                    <div class="col-xs-11">
+                        <address class="info-text">
+                            <strong>{{ place.results.name }}</strong><br>
+                            {{ place.results.formatted_address }}
+                        </address>
+                        <form class="info-text" action="http://maps.google.com/maps" method="get" target="_blank">
+                            <input type="hidden" name="saddr" value="Sopot"/>
+                            <input type="hidden" name="daddr" value="{{ place.results.formatted_address }}" />
+                            <input type="submit" value="Navigate" />
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+                {% if place.results.phone is not null %}
+                <div class="row sub-section">
+                    <div class="col-xs-1">
+                        <i class="fa fa-2x fa-phone info-marker"
+                           aria-hidden="true"></i>
+                    </div>
+                    <div class="col-xs-11">
+                        <p class="info-text">
+                            {{ place.results.phone }}
+                        </p>
+                    </div>
+                </div>
+                {% endif %}
+                {% if place.results.opening_hours is not null %}
+                <div class="row sub-section">
+                    <div class="col-xs-1">
+                        <i class="fa fa-2x fa-clock-o info-marker"
+                           aria-hidden="true"></i>
+                    </div>
+                    <div class="col-xs-11">
+                        {% if place.results.opening_hours.open_now is not null %}
+                            {% if place.results.opening_hours.open_now %}
+                                <strong class="info-text">Open now!</strong>
+                            {% else %}
+                                <strong class="info-text">Closed now!</strong>
+                            {% endif %}
+                        {% endif %}
+                        {% for weekday in place.results.opening_hours.weekday_text %}
+                            <p class="info-text">
+                                {{ weekday }}
+                            </p>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                <h2 class="section-title">Photos</h2>
+                <img src="" alt="">
+                <div class="gallery cf">
+                    {% if place.results.photos is not empty %}
+                        {% for photo in place.results.photos %}
+                            <div>
+                                <img src="{{ photo.link }}?maxheight=400" alt="">
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% if place.results.reviews is not empty %}
+            <div class="row">
+                <div class="col-md-12">
+                    <h2 class="section-title">Reviews</h2>
+                    <div class="row">
+                        {% for review in place.results.reviews %}
+                            <div class="col-xs-12">
+
+                                <div class="review-container">
+                                    <p class="review-author">{{ review.author_name }}</p>
+                                    <p class="review-date">{{ review.time|date("d/m/Y")}}</p>
+                                    <p class="review-text">{{ review.text }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+    </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ key }}"></script>
+    <script>
+
+        //
+
+        // When the window has finished loading create our google map below
+        google.maps.event.addDomListener(window, 'load', init);
+
+        function init() {
+            // Basic options for a simple Google Map
+            // For more options see: https://developers.google.com/maps/documentation/javascript/reference#MapOptions
+            var mapOptions = {
+                // How zoomed in you want the map to start at (always required)
+                zoom: 18,
+
+                // The latitude and longitude to center the map (always required)
+                center: new google.maps.LatLng({{ place.results.location.lat }}, {{ place.results.location.lng }}),
+                disableDefaultUI: true,
+                // Style from SnazzyMap
+                styles: [{"featureType":"road","elementType":"geometry","stylers":[{"visibility":"off"}]},{"featureType":"poi","elementType":"geometry","stylers":[{"visibility":"off"}]},{"featureType":"landscape","elementType":"geometry","stylers":[{"color":"#FFFAF0"}]},{"featureType":"water","stylers":[{"color":"#d9edf7"}]},{"featureType":"road","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"transit","stylers":[{"visibility":"off"}]},{"featureType":"administrative","elementType":"geometry","stylers":[{"lightness":40}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"visibility":"on","color":"#c5dac6"}]},{"featureType":"landscape.natural.terrain","elementType":"geometry.fill","stylers":[{"visibility":"on"},{"color":"#CCAA88"},{"lightness":40},]},{"featureType":"landscape.man_made","elementType":"geometry.fill","stylers":[{"visibility":"on"},{"color":"#EEEEEE"}]},{"featureType":"road","stylers":[{"visibility":"simplified"},{"color":"#FF0000"},{"gamma":9}]},{"featureType":"road.highway","stylers":[{"visibility":"on"},{"color":"#FF0000"},{"gamma":8}]},{"featureType":"road.highway.controlled_access","stylers":[{"visibility":"on"},{"color":"#FF0000"},{"gamma":4}]},{"featureType":"road","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"poi.government","elementType":"geometry","stylers":[{"visibility":"on"},{"color":"#DDDDDD"},]},{"featureType":"transit.station","elementType":"geometry","stylers":[{"visibility":"on"},{"color":"#CCCCCC"}]},{"featureType":"transit.line","elementType":"geometry","stylers":[{"visibility":"on"},{"color":"#AAAAAA"},{"gamma":4}]}]
+            };
+
+            // Get the HTML DOM element that will contain your map
+            // We are using a div with id="map" seen below in the <body>
+            var mapElement = document.getElementById('map');
+
+            // Create the Google Map using our element and options defined above
+            var map = new google.maps.Map(mapElement, mapOptions);
+
+            // Let's also add a marker while we're at it
+            var marker = new google.maps.Marker({
+                position: new google.maps.LatLng({{ place.results.location.lat }}, {{ place.results.location.lng }}),
+                map: map,
+                title: '{{ place.results.name }}'
+            });
+        }
+
+    </script>
+
+
 {% endblock %}
