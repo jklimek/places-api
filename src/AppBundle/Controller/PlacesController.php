@@ -42,7 +42,7 @@ class PlacesController extends Controller {
             // Build final response body
             $resultBody = [];
             // Get next page token and uri
-            if ($responseBody["next_page_token"]) {
+            if (isset($responseBody["next_page_token"])) {
                 $resultBody["next_page"] = "/api/places?next_page_token=" . $responseBody["next_page_token"];
             }
             $resultBody["results"] = $places;
@@ -213,23 +213,23 @@ class PlacesController extends Controller {
         $requestParameters = $request->query->all();
         $defaults = [
             "radius"        => 2000, // Default radius - 2000m
-            "rankBy"        => "prominence", // Default rank by prominence
+            "rankby"        => "prominence", // Default rank by prominence
             "type"          => "bar", // Default type - bar
             "location"      => "54.348538,18.653228", // Default location - Neptune's Fountain
-            "nextPageToken" => null, // Next page token is not set as default - used to paginate
+            "next_page_token" => null, // Next page token is not set as default - used to paginate
             "name"          => null, // Query for a name search
-            "openNow"       => null, // Open fo business at the time query is sent
+            "opennow"       => null, // Open fo business at the time query is sent
             "sort"          => null, // Sorting parameters
         ];
 
         $parameters = [
             "radius"        => $requestParameters["radius"] ?? $defaults["radius"],
-            "rankBy"        => $requestParameters["rankby"] ?? $defaults["rankBy"],
+            "rankby"        => $requestParameters["rankby"] ?? $defaults["rankby"],
             "type"          => $requestParameters["type"] ?? $defaults["type"],
             "location"      => $requestParameters["location"] ?? $defaults["location"],
-            "nextPageToken" => $requestParameters["next_page_token"] ?? $defaults["nextPageToken"],
+            "next_page_token" => $requestParameters["next_page_token"] ?? $defaults["next_page_token"],
             "name"          => $requestParameters["name"] ?? $defaults["name"],
-            "openNow"       => $requestParameters["opennow"] ?? $defaults["openNow"],
+            "opennow"       => $requestParameters["opennow"] ?? $defaults["opennow"],
             "sort"          => $requestParameters["sort"] ?? $defaults["sort"],
             "key"           => $this->getParameter("google_api_key"),
 //            "key"           => $requestParameters["key"],
@@ -251,21 +251,21 @@ class PlacesController extends Controller {
             "location" => $parameters["location"],
             "radius"   => $parameters["radius"],
             "type"     => $parameters["type"],
-            "rankby"   => $parameters["rankBy"],
+            "rankby"   => $parameters["rankby"],
             "key"      => $parameters["key"]
         ];
         // Handling optional parameters
-        if ($parameters["nextPageToken"]) {
-            $options["pagetoken"] = $parameters["nextPageToken"];
+        if ($parameters["next_page_token"]) {
+            $options["pagetoken"] = $parameters["next_page_token"];
         }
-        if ($parameters["openNow"]) {
-            $options["opennow"] = $parameters["openNow"];
+        if ($parameters["opennow"]) {
+            $options["opennow"] = $parameters["opennow"];
         }
         if ($parameters["name"]) {
             $options["name"] = $parameters["name"];
         }
         // Google Places API restriction - rankby=distance must be used without radius parameter
-        if ($parameters["rankBy"] == "distance") {
+        if ($parameters["rankby"] == "distance") {
             unset($options["radius"]);
         }
 
