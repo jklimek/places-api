@@ -8,6 +8,7 @@
 
 namespace AppBundle\Service;
 use GuzzleHttp;
+use GuzzleHttp\Exception;
 
 class RequestsService {
 
@@ -39,11 +40,17 @@ class RequestsService {
     }
 
     private function httpRequest($method, $url, $options) {
-        $responseFile = $this->client
-            ->request($method, $url, ["query" => $options])
-            ->getBody();
+        try {
+            $responseFile = $this->client
+                ->request($method, $url, ["query" => $options])
+                ->getBody();
 
-        return $responseFile;
+            return $responseFile;
+        } catch (\Exception $e) {
+
+            throw new \Exception("Bad request", $e->getCode());
+        }
+
     }
 
 }

@@ -196,6 +196,8 @@ class PlacesController extends Controller {
 
         $sortingOrder = explode(",", $parameters["sort"]);
         array_unique($sortingOrder);
+        // Stripping sortingOrder array from possible '-' signs
+        $sortingOrder = array_map(function($elem) {return str_replace("-", "", $elem);}, $sortingOrder);
         // Check if sorting arguments match existing fields
         // Diffing sortingOrder with place keys
         $extraFields = array_diff($sortingOrder, array_keys($places[0]));

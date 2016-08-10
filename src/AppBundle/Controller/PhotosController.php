@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use GuzzleHttp;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -13,8 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Rest controller for photos
  * @Route("/api")
  */
-class PhotosController extends Controller
-{
+class PhotosController extends Controller {
     /**
      * @Route("/photos/{photoId}", name="api_photo")
      * @param $photoId
@@ -22,21 +22,34 @@ class PhotosController extends Controller
      * @return array
      */
     public function photosAction($photoId, Request $request) {
-        $parameters = $this->prepareParameters($photoId, $request);
-        $options = $this->prepareOptions($parameters);
+        try {
+            $parameters = $this->prepareParameters($photoId, $request);
+            $options = $this->prepareOptions($parameters);
 
-        $responsePhoto = $this->get('api.requests.service')->makeFileRequest($this->getParameter('google_place_photo_url'), $options);
-        $headers = [
-            'Content-Type' => 'image/png'
-        ];
+            $responsePhoto = $this->get('api.requests.service')->makeFileRequest($this->getParameter('google_place_photo_url'), $options);
+            $headers = [
+                'Content-Type' => 'image/png'
+            ];
 
-        return new Response($responsePhoto, 200, $headers);
+            return new Response($responsePhoto, 200, $headers);
+
+
+        } catch (\Exception $exception) {
+
+            return new JsonResponse([
+                'status'        => "ERROR",
+                'error_message' => $exception->getMessage(),
+                'code'          => $exception->getCode(),
+            ]);
+
+        }
+
     }
 
     private function prepareOptions($parameters) {
         $options = [
             "photoreference" => $parameters["photoId"],
-            "key" => $parameters["key"]
+            "key"            => $parameters["key"]
         ];
 
         if ($parameters["maxWidth"]) {
@@ -53,15 +66,15 @@ class PhotosController extends Controller
     private function prepareParameters($photoId, Request $request) {
 
         $defaults = [
-            "maxWidth"        => 800,
-            "maxHeight"        => 600,
+            "maxWidth"  => 800,
+            "maxHeight" => 600,
         ];
 
         $parameters = [
-            "photoId"        => $photoId ?? null,
-            "maxWidth"        => $request->get("maxwidth") ?? $defaults["maxWidth"],
-            "maxHeight"        => $request->get("maxheight") ?? $defaults["maxHeight"],
-            "key"           => $this->getParameter("google_api_key"),
+            "photoId"   => $photoId ?? null,
+            "maxWidth"  => $request->get("maxwidth") ?? $defaults["maxWidth"],
+            "maxHeight" => $request->get("maxheight") ?? $defaults["maxHeight"],
+            "key"       => $this->getParameter("google_api_key"),
 //            "key"           => $request->get("key"),
         ];
 
