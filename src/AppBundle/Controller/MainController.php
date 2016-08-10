@@ -27,7 +27,7 @@ class MainController extends Controller
         ];
 
 
-        $url = "http://places.klemens.ninja/places";
+        $url = "http://places.klemens.ninja/api/places";
 //        $url = "http://0.0.0.0:8888/places";
         $options = [
             "location" => str_replace("%2C",",",$parameters["location"]), // Default location - Neptune's Fountain
@@ -54,7 +54,7 @@ class MainController extends Controller
         ];
 
 
-        $url = "http://places.klemens.ninja/places/".$placeId;
+        $url = "http://places.klemens.ninja/api/places/".$placeId;
 //        $url = "http://0.0.0.0:8888/places";
         $options = [
             "location" => str_replace("%2C",",",$parameters["location"]), // Default location - Neptune's Fountain

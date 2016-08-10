@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Rest controller for places
+ * @Route("/api")
  */
 class PlacesController extends Controller {
 
@@ -42,7 +43,7 @@ class PlacesController extends Controller {
             $resultBody = [];
             // Get next page token and uri
             if ($responseBody["next_page_token"]) {
-                $resultBody["next_page"] = "/places?next_page_token=" . $responseBody["next_page_token"];
+                $resultBody["next_page"] = "/api/places?next_page_token=" . $responseBody["next_page_token"];
             }
             $resultBody["results"] = $places;
             $resultBody["status"] = "OK";
@@ -108,7 +109,7 @@ class PlacesController extends Controller {
                 $photos[] = [
                     "height" => $photo["height"],
                     "width"  => $photo["width"],
-                    "link"   => "/photos/" . $photo["photo_reference"]
+                    "link"   => "/api/photos/" . $photo["photo_reference"]
                 ];
             }
         }
@@ -177,7 +178,7 @@ class PlacesController extends Controller {
 
             // HATEOAS link
             $links["self"] = [
-                "href" => "/places/$placeId",
+                "href" => "/api/places/$placeId",
                 "rel"  => "self"
             ];
 

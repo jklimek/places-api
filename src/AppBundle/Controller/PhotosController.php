@@ -8,6 +8,11 @@ use Symfony\Component\HttpFoundation\Request;
 use GuzzleHttp;
 use Symfony\Component\HttpFoundation\Response;
 
+
+/**
+ * Rest controller for photos
+ * @Route("/api")
+ */
 class PhotosController extends Controller
 {
     /**
