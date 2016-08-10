@@ -23,7 +23,7 @@ class MainController extends Controller
         $parameters = [
             "type" => $request->get('type'),
             "radius" => $request->get('type') ?? 2000,
-            "location" => $request->get('location') ?? "54.348538,18.653228",
+            "location" => (!empty($request->get('location'))) ? $request->get('location') : "54.348538,18.653228"
         ];
 
 
@@ -39,7 +39,7 @@ class MainController extends Controller
     }
 
     /**
-     * @Route("/{placeId}", name="place_details")
+     * @Route("/place/{placeId}", name="place_details")
      * @Template
      * @param $placeId
      * @param Request $request
