@@ -9,7 +9,6 @@
         <div class="row">
             <div class="col-lg-12">
                 <h3>{% if type is not null %}{{ type|capitalize }}{% else %}Bar{% endif %}s nearby {% if location != "54.348538,18.653228" %}your location{% else %}Neptune's Fountain in Gdańsk{% endif %} ({{ response.results|length }})</h3>
-                {#<h5 id="locationTest"></h5>#}
             </div>
         </div>
         <div class="row">
@@ -20,7 +19,7 @@
                         <div class="listed-place-container">
                             <div class="listed-place-photo">
                                 {% if place.links.photo.href is defined %}
-                                    <img src="{{ place.links.photo.href }}?maxheight=100" alt="">
+                                    <img src="{{ apiUrl }}{{ place.links.photo.href }}?maxheight=100" alt="">
                                 {% else %}
                                     {% image '@AppBundle/Resources/web/img/place-placeholder.jpeg' %}
                                     <img src="{{ asset_url }}">

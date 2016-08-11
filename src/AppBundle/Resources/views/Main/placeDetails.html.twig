@@ -16,7 +16,7 @@
                                 <div class="place-data">
                                     {% if place.results.photos.0.link is not null %}
                                     <div class="place-photo hidden-sm hidden-xs">
-                                        <img src="{{ place.results.photos.0.link }}?maxheight=100" alt="">
+                                        <img src="{{ apiUrl }}{{ place.results.photos.0.link }}?maxheight=100" alt="">
                                     </div>
                                     {% endif %}
                                     <h1 class="place-name">
@@ -99,7 +99,7 @@
                     {% if place.results.photos is not empty %}
                         {% for photo in place.results.photos %}
                             <div>
-                                <img src="{{ photo.link }}?maxheight=400" alt="">
+                                <img src="{{ apiUrl }}{{ photo.link }}?maxheight=400" alt="">
                             </div>
                         {% endfor %}
                     {% endif %}

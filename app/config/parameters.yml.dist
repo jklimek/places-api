@@ -18,8 +18,11 @@ parameters:
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
 
-    # Google Places API key
+    # Google Places API
     google_places_url: https://maps.googleapis.com/maps/api/place/nearbysearch/json
     google_place_details_url: https://maps.googleapis.com/maps/api/place/details/json
     google_place_photo_url: https://maps.googleapis.com/maps/api/place/photo
     google_api_key: AIzaSyA3yvqq0jKmnYk8-EX_DioJhSH2ubgfmZs
+
+    # Interface API URL
+    api_url: http://places.klemens.ninja

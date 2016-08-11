@@ -25,7 +25,7 @@ class MainController extends Controller {
         ];
 
 
-        $url = "http://places.klemens.ninja/api/places";
+        $url =  $this->getParameter("api_url") . "/api/places";
 //        $url = "http://0.0.0.0:8888/places";
         $options = [
             "location" => str_replace("%2C", ",", $parameters["location"]), // Default location - Neptune's Fountain
@@ -33,9 +33,10 @@ class MainController extends Controller {
             "type"     => $parameters["type"], // Default type - bar
             "key"      => $this->getParameter("google_api_key"),
         ];
-        $responseBody = $this->get('api.requests.service')->makeJsonRequest($url, $options);
 
-        return ["response" => $responseBody, "type" => $parameters["type"], "location" => $parameters["location"]];
+        $responseBody = $this->get('api.requests.service')->makeJsonRequest($url, $options);
+//        dump($responseBody);
+        return ["response" => $responseBody, "type" => $parameters["type"], "location" => $parameters["location"], "apiUrl" => $this->getParameter("api_url")];
     }
 
     /**
@@ -53,7 +54,7 @@ class MainController extends Controller {
         ];
 
 
-        $url = "http://places.klemens.ninja/api/places/" . $placeId;
+        $url =  $this->getParameter("api_url") . "/api/places/" . $placeId;
 //        $url = "http://0.0.0.0:8888/places";
         $options = [
             "location" => str_replace("%2C", ",", $parameters["location"]), // Default location - Neptune's Fountain
@@ -63,6 +64,6 @@ class MainController extends Controller {
         ];
         $responseBody = $this->get('api.requests.service')->makeJsonRequest($url, $options);
 
-        return ["place" => $responseBody, "key" => $this->getParameter("google_api_key")];
+        return ["place" => $responseBody, "key" => $this->getParameter("google_api_key"), "apiUrl" => $this->getParameter("api_url")];
     }
 }

@@ -202,6 +202,7 @@ class PlacesController extends Controller {
                 "location"      => $responsePlace["geometry"]["location"] ?? null,
                 "price_level"   => $responsePlace["price_level"] ?? null,
                 "opening_hours" => $responsePlace["opening_hours"] ?? null,
+                "vicinity"      => $responsePlace["vicinity"] ?? null,
             ];
 
 
