@@ -68,7 +68,7 @@ class PhotosController extends Controller {
     }
 
     /**
-     * Function for preparing options for http request
+     * Method for preparing options for http request
      *
      * @param array $parameters
      * @return array $options
@@ -90,7 +90,7 @@ class PhotosController extends Controller {
     }
 
     /**
-     * Function for preparing parameters array
+     * Method for preparing parameters array
      *
      * @param string $photoId
      * @param Request $request
