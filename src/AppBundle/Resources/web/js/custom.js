@@ -46,7 +46,8 @@ function displayError(error) {
         3: 'Request timeout'
     };
     //$("#locationTest").text("Error: " + errors[error.code]);
-    console.log("Error: " + errors[error.code]);
+    //console.log("Error: " + errors[error.code]);
+    alert("Error: " + errors[error.code]);
 }
 
 function toggleIdElement(id) {
