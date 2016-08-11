@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller;
 
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,10 +18,29 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class PhotosController extends Controller {
     /**
+     *
+     * Photo resource from Google Places API
+     *
+     * @ApiDoc(
+     *  section="Photos",
+     *  description="Returns photo file",
+     *  requirements={
+     *      {
+     *          "name"="photoId",
+     *          "dataType"="string",
+     *          "requirement"="\w+",
+     *          "description"="Photo unique id from Google Places API."
+     *      }
+     *  },
+     *  parameters={
+     *      {"name"="key", "dataType"="integer", "required"=true, "format"="\w+", "description"="Google Places API key. (https://developers.google.com/places/web-service/get-api-key)"},
+     *  }
+     * )
      * @Route("/photos/{photoId}", name="api_photo")
-     * @param $photoId
-     * @param Request $request
-     * @return array
+     * @Method({"GET"})
+     * @param string $photoId Unique photo id
+     * @param Request $request Symfony http Request object
+     * @return Response Photo file stream
      */
     public function photosAction($photoId, Request $request) {
         try {

@@ -2,31 +2,52 @@
 
 namespace AppBundle\Controller;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 //use GuzzleHttp;
 
 /**
  * Rest controller for places
  * @Route("/api")
+ * @Method({"GET"})
  */
 class PlacesController extends Controller {
 
     /**
+     * General places resource providing information about places from Google Places API
+     *
+     * @ApiDoc(
+     *  section="Places",
+     *  description="Returns a places list",
+     *  parameters={
+     *      {"name"="key", "dataType"="integer", "required"=true, "format"="\w+", "description"="Google Places API key. (https://developers.google.com/places/web-service/get-api-key)"},
+     *      {"name"="radius", "dataType"="integer", "required"=false, "format"="\d+", "description"="Search radius in meters (default=2000)"},
+     *      {"name"="rankby", "dataType"="string", "required"=false, "format"="\w+", "description"="Specifies order (prominence/distance) in which places are listed (default=prominence"},
+     *      {"name"="type", "dataType"="string", "required"=false, "format"="\w+", "description"="Specifies type of returned places are listed (default=bar)"},
+     *      {"name"="location", "dataType"="string", "required"=false, "format"="-?\d{1,2}\.\d{0,10},-?\d{1,2}\.\d{0,10}", "description"="The latitude/longitude around which to retrieve places (default=54.348538,18.653228 Neptune's Fountain in Gdansk)"},
+     *      {"name"="next_page_token", "dataType"="string", "required"=false, "format"="\w+", "description"="Token for returning next page for previous search"},
+     *      {"name"="name", "dataType"="string", "required"=false, "format"="\w+", "description"="Parameter matching against the names of search places."},
+     *      {"name"="opennow", "dataType"="bool", "required"=false, "format"=".*", "description"="Flag for filtering only palces open at the request time"},
+     *      {"name"="sort", "dataType"="string", "required"=false, "format"="-?\w+(,-?\w+)*", "description"="Parameter for sorting results. Sort parameter take in list of comma separated fields
+                (name, place_id, rating, location, price_level, opening_hours, vicinity), each with a possible unary negative (e.g. -rating) to imply descending sort order.
+           "},
+     *  }
+     * )
+     *
      * @Route("/places", name="api_places_default")
-     * @param Request $request
+     * @Method({"GET"})
+     * @param Request $request Symfony http Request object
      * @return array
      */
     public function placesAction(Request $request) {
 
         try {
-            // Check if http method is valid (accepting only GET for this resource)
-            if (!$request->isMethod('GET')) {
-                throw new \Exception("Method not allowed. This resource is handled via GET method.", 405);
-            }
 
             // Parameters
             $parameters = $this->preparePlacesRequestParameters($request);
@@ -64,17 +85,32 @@ class PlacesController extends Controller {
 
 
     /**
+     * Single place details resource providing information about particular place from Google Places API
+     *
+     * @ApiDoc(
+     *  section="Places",
+     *  description="Returns a single place details",
+     *  requirements={
+     *      {
+     *          "name"="placeId",
+     *          "dataType"="string",
+     *          "requirement"="\w+",
+     *          "description"="Place unique id from Google Places API."
+     *      }
+     *  },
+     *  parameters={
+     *      {"name"="key", "dataType"="integer", "required"=true, "format"="\w+", "description"="Google Places API key. (https://developers.google.com/places/web-service/get-api-key)"},
+     *  }
+     * )
+     *
      * @Route("/places/{placeId}", name="api_place_details")
-     * @param string $placeId
-     * @param Request $request
+     * @Method({"GET"})
+     * @param string $placeId Unique place id
+     * @param Request $request Symfony http Request object
      * @return array
      */
     public function placeDetailsAction($placeId, Request $request) {
         try {
-            // Check if http method is valid (accepting only GET for this resource)
-            if (!$request->isMethod('GET')) {
-                throw new \Exception("Method not allowed. This resource is handled via GET method.", 405);
-            }
             $options = [
                 "placeid" => $placeId,
                 "key"     => $this->getParameter("google_api_key"),
@@ -166,7 +202,6 @@ class PlacesController extends Controller {
                 "location"      => $responsePlace["geometry"]["location"] ?? null,
                 "price_level"   => $responsePlace["price_level"] ?? null,
                 "opening_hours" => $responsePlace["opening_hours"] ?? null,
-                "vicinity"      => $responsePlace["vicinity"] ?? null,
             ];
 
 
@@ -196,6 +231,12 @@ class PlacesController extends Controller {
     private function preparePlacesRequestParameters(Request $request) {
 
         $requestParameters = $request->query->all();
+
+        // Check if key is passed as a parameter
+        if (!isset($requestParameters["key"])) {
+            throw new \Exception("Missing Google Places API key", 401);
+        }
+
         $defaults = [
             "radius"        => 2000, // Default radius - 2000m
             "rankby"        => "prominence", // Default rank by prominence
@@ -216,8 +257,8 @@ class PlacesController extends Controller {
             "name"          => $requestParameters["name"] ?? $defaults["name"],
             "opennow"       => $requestParameters["opennow"] ?? $defaults["opennow"],
             "sort"          => $requestParameters["sort"] ?? $defaults["sort"],
-            "key"           => $this->getParameter("google_api_key"),
-//            "key"           => $requestParameters["key"],
+//            "key"           => $this->getParameter("google_api_key"),
+            "key"           => $requestParameters["key"],
         ];
         // Check validity of all requested parameters
         // Searching for extra parameters by diffing request parameters with defined parameters set
