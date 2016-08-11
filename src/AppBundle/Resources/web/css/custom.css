@@ -288,7 +288,7 @@ footer p {
 }
 
 
-@media (max-device-width :760px) {
+@media (max-width :760px) {
 
     .form-container {
         float: none;
