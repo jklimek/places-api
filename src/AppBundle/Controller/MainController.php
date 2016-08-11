@@ -8,8 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use GuzzleHttp;
 use Symfony\Component\HttpFoundation\Request;
 
-class MainController extends Controller
-{
+class MainController extends Controller {
 
     /**
      * @Route("/", name="homepage")
@@ -18,11 +17,10 @@ class MainController extends Controller
      * @return array
      * @throws \Exception
      */
-    public function indexAction(Request $request)
-    {
+    public function indexAction(Request $request) {
         $parameters = [
-            "type" => $request->get('type'),
-            "radius" => $request->get('type') ?? 2000,
+            "type"     => $request->get('type'),
+            "radius"   => $request->get('type') ?? 2000,
             "location" => (!empty($request->get('location'))) ? $request->get('location') : "54.348538,18.653228"
         ];
 
@@ -30,11 +28,13 @@ class MainController extends Controller
         $url = "http://places.klemens.ninja/api/places";
 //        $url = "http://0.0.0.0:8888/places";
         $options = [
-            "location" => str_replace("%2C",",",$parameters["location"]), // Default location - Neptune's Fountain
-            "radius" => 2000,
-            "type" => $parameters["type"], // Default type - bar
+            "location" => str_replace("%2C", ",", $parameters["location"]), // Default location - Neptune's Fountain
+            "radius"   => 2000,
+            "type"     => $parameters["type"], // Default type - bar
+            "key"      => $this->getParameter("google_api_key"),
         ];
         $responseBody = $this->get('api.requests.service')->makeJsonRequest($url, $options);
+
         return ["response" => $responseBody, "type" => $parameters["type"], "location" => $parameters["location"]];
     }
 
@@ -46,20 +46,20 @@ class MainController extends Controller
      * @return array
      * @throws \Exception
      */
-    public function placeDetailsAction($placeId, Request $request)
-    {
+    public function placeDetailsAction($placeId, Request $request) {
         $parameters = [
-            "type" => $request->get('type'),
+            "type"     => $request->get('type'),
             "location" => $request->get('location') ?? "54.348538,18.653228",
         ];
 
 
-        $url = "http://places.klemens.ninja/api/places/".$placeId;
+        $url = "http://places.klemens.ninja/api/places/" . $placeId;
 //        $url = "http://0.0.0.0:8888/places";
         $options = [
-            "location" => str_replace("%2C",",",$parameters["location"]), // Default location - Neptune's Fountain
-            "radius" => 2000,
-            "type" => $parameters["type"], // Default type - bar
+            "location" => str_replace("%2C", ",", $parameters["location"]), // Default location - Neptune's Fountain
+            "radius"   => 2000,
+            "type"     => $parameters["type"], // Default type - bar
+            "key"      => $this->getParameter("google_api_key"),
         ];
         $responseBody = $this->get('api.requests.service')->makeJsonRequest($url, $options);
 
