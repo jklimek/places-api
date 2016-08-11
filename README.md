@@ -5,8 +5,8 @@ REST API is built using Symfony2 framework.
 I didn't use any REST builder bundle (such as FOSRestBundle) for the sake of self improvement and code show off. Http requests are made with GuzzleHttp classes
 
 REST API consists of 2 resources:
-* ```/places``` + ```/places/{placeId}```
-* ```/photos/{photoId}```
+* ```/api/places``` + ```/places/{placeId}```
+* ```/api/photos/{photoId}```
 
 First one provides list and places details around given (or default) location. 
 Second one is for fetching places photos
@@ -25,7 +25,7 @@ Tests were written using codecption tool (http://codeception.com/quickstart). Af
 Places GUI
 =========
 
-Places GUI is also built using Symfony2 framework (API + GUI are build together as a single project) along with Bootstrap3.
+Places GUI is also built using Symfony2 framework (API + GUI are build together as a single project) along with Bootstrap3. It consumes requested API and for the sake of presentation uses hardcoded (in ```.app/config/parameters.yml.dist```) Google Places API (with bumped daily limits)
 GUI consists of 2 pages:
 
 * index/listing page (```/```)
@@ -50,3 +50,5 @@ After that you need to install all assets. Run ```php app/console assetic:dump``
 Project is written in PHP7 so any suitable HTTP server supporting PHP7 will be suitable. As a standard Symfony2 project local php server is also sufficient (e.g. ``` php ./app/console server:start 127.0.0.1:8000``` command).
 
 After that you should be ready to go and use API along with provided GUI application.
+
+I also provided working API with GUI at http://places.klemens.ninja/
