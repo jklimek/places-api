@@ -67,6 +67,12 @@ class PhotosController extends Controller {
 
     }
 
+    /**
+     * Function for preparing options for http request
+     *
+     * @param array $parameters
+     * @return array $options
+     */
     private function prepareOptions($parameters) {
         $options = [
             "photoreference" => $parameters["photoId"],
@@ -83,7 +89,13 @@ class PhotosController extends Controller {
         return $options;
     }
 
-
+    /**
+     * Function for preparing parameters array
+     *
+     * @param string $photoId
+     * @param Request $request
+     * @return array $parameters
+     */
     private function prepareParameters($photoId, Request $request) {
 
         $defaults = [

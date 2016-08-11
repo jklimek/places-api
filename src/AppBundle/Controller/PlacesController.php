@@ -111,11 +111,15 @@ class PlacesController extends Controller {
      */
     public function placeDetailsAction($placeId, Request $request) {
         try {
+
             $options = [
                 "placeid" => $placeId,
-                "key"     => $this->getParameter("google_api_key"),
-//                "key" => $request->get("key"),
+//                "key"     => $this->getParameter("google_api_key"),
+                "key" => $request->get("key"),
             ];
+            if (is_null($options["key"])) {
+                throw new \Exception("Missing Google Places API key", 401);
+            }
             $responseBody = $this->get('api.requests.service')->makeJsonRequest($this->getParameter('google_place_details_url'), $options);
             $placeArray = $this->buildSinglePlaceArray($responseBody);
 
@@ -138,9 +142,17 @@ class PlacesController extends Controller {
         }
     }
 
+
+    /**
+     * Method for building output array for single place from Google Place API response
+     *
+     * @param array $responseBody
+     * @return array $placeArray
+     */
     private function buildSinglePlaceArray($responseBody) {
         $responseResult = $responseBody["result"];
         $photos = [];
+        // Generate array containing photos if they exist
         if (!empty($responseResult["photos"])) {
             foreach ($responseResult["photos"] as $photo) {
                 $photos[] = [
@@ -171,9 +183,15 @@ class PlacesController extends Controller {
         ];
 
         return $placeArray;
-//        return $responseBody;
     }
 
+    /**
+     * Method for building output array of places from Google Place API response and given parameters
+     *
+     * @param $responseBody
+     * @param $parameters
+     * @return array
+     */
     private function buildPlacesArray($responseBody, $parameters) {
         // Building places array
         $places = [];
@@ -229,6 +247,13 @@ class PlacesController extends Controller {
         return $places;
     }
 
+    /**
+     * Method for preparing parameters for single place request
+     *
+     * @param Request $request
+     * @return array
+     * @throws \Exception
+     */
     private function preparePlacesRequestParameters(Request $request) {
 
         $requestParameters = $request->query->all();
@@ -272,6 +297,12 @@ class PlacesController extends Controller {
 
     }
 
+    /**
+     * Method for preparing options for places request
+     *
+     * @param $parameters
+     * @return array
+     */
     private function preparePlacesRequestOptions($parameters) {
 
         $options = [
