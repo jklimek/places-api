@@ -12,7 +12,7 @@ class SorterTest extends \Codeception\Test\Unit {
      * @var HelpersService
      */
     protected $service;
-    protected $array1 = [
+    protected $testDataset = [
         [
             "name"     => "bbb",
             "rating"   => 23,
@@ -41,8 +41,8 @@ class SorterTest extends \Codeception\Test\Unit {
 
     // tests
     public function testSorter() {
-        $sortingOrder1 = "-name";
-        $arrayToCompare1 = [
+        $sortingOrder = "-name";
+        $actualResult = [
             [
                 "name"     => "ddd",
                 "rating"   => 0,
@@ -65,35 +65,11 @@ class SorterTest extends \Codeception\Test\Unit {
             ],
         ];
 
-        $sortingOrder2 = "name";
-        $arrayToCompare2 = [
+        $arrayToTest = $this->service->sortArrayByFields($this->testDataset, $sortingOrder);
+        $this->assertEquals($actualResult, $arrayToTest);
 
-            [
-                "name"     => "aaa",
-                "rating"   => 10,
-                "distance" => 100
-            ],
-            [
-                "name"     => "bbb",
-                "rating"   => 23,
-                "distance" => 666
-            ],
-
-            [
-                "name"     => "ccc",
-                "rating"   => 2,
-                "distance" => 666
-            ],
-            [
-                "name"     => "ddd",
-                "rating"   => 0,
-                "distance" => 16
-            ],
-
-        ];
-
-        $sortingOrder3 = "name,-rating";
-        $arrayToCompare3 = [
+        $sortingOrder = "name";
+        $actualResult = [
 
             [
                 "name"     => "aaa",
@@ -119,8 +95,42 @@ class SorterTest extends \Codeception\Test\Unit {
 
         ];
 
-        $sortingOrder4 = "-distance,name";
-        $arrayToCompare4 = [
+        $arrayToTest = $this->service->sortArrayByFields($this->testDataset, $sortingOrder);
+        $this->assertEquals($actualResult, $arrayToTest);
+
+        $sortingOrder = "name,-rating";
+        $actualResult = [
+
+            [
+                "name"     => "aaa",
+                "rating"   => 10,
+                "distance" => 100
+            ],
+            [
+                "name"     => "bbb",
+                "rating"   => 23,
+                "distance" => 666
+            ],
+
+            [
+                "name"     => "ccc",
+                "rating"   => 2,
+                "distance" => 666
+            ],
+            [
+                "name"     => "ddd",
+                "rating"   => 0,
+                "distance" => 16
+            ],
+
+        ];
+
+        $arrayToTest = $this->service->sortArrayByFields($this->testDataset, $sortingOrder);
+        $this->assertEquals($actualResult, $arrayToTest);
+
+
+        $sortingOrder = "-distance,name";
+        $actualResult = [
             [
                 "name"     => "bbb",
                 "rating"   => 23,
@@ -146,8 +156,12 @@ class SorterTest extends \Codeception\Test\Unit {
 
         ];
 
-        $sortingOrder5 = "-distance,name,rating";
-        $arrayToCompare5 = [
+        $arrayToTest = $this->service->sortArrayByFields($this->testDataset, $sortingOrder);
+        $this->assertEquals($actualResult, $arrayToTest);
+
+
+        $sortingOrder = "-distance,name,rating";
+        $actualResult = [
             [
                 "name"     => "bbb",
                 "rating"   => 23,
@@ -174,21 +188,11 @@ class SorterTest extends \Codeception\Test\Unit {
         ];
 
 
+        $arrayToTest = $this->service->sortArrayByFields($this->testDataset, $sortingOrder);
+        $this->assertEquals($actualResult, $arrayToTest);
 
-        $arrayToTest1 = $this->service->sortArrayByFields($this->array1, $sortingOrder1);
-        $this->assertEquals($arrayToCompare1, $arrayToTest1);
 
-        $arrayToTest2 = $this->service->sortArrayByFields($this->array1, $sortingOrder2);
-        $this->assertEquals($arrayToCompare2, $arrayToTest2);
 
-        $arrayToTest3 = $this->service->sortArrayByFields($this->array1, $sortingOrder3);
-        $this->assertEquals($arrayToCompare3, $arrayToTest3);
-
-        $arrayToTest4 = $this->service->sortArrayByFields($this->array1, $sortingOrder4);
-        $this->assertEquals($arrayToCompare4, $arrayToTest4);
-
-        $arrayToTest5 = $this->service->sortArrayByFields($this->array1, $sortingOrder5);
-        $this->assertEquals($arrayToCompare5, $arrayToTest5);
 
 
     }
