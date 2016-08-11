@@ -36,7 +36,8 @@ class PlacesController extends Controller {
 
             // Sort places array if requested
             if (!is_null($parameters["sort"]) && is_string($parameters["sort"])) {
-                $places = $this->sortPlacesByParameters($places, $parameters);
+//                $places = $this->sortPlacesByParameters($places, $parameters);
+                $places = $this->get('api.service.helpers')->sortArrayByFields($places, $parameters["sort"]);
             }
 
             // Build final response body
@@ -190,24 +191,6 @@ class PlacesController extends Controller {
         }
 
         return $places;
-    }
-
-    private function sortPlacesByParameters($places, $parameters) {
-
-        $sortingOrder = explode(",", $parameters["sort"]);
-        array_unique($sortingOrder);
-        // Stripping sortingOrder array from possible '-' signs
-        $sortingOrder = array_map(function($elem) {return str_replace("-", "", $elem);}, $sortingOrder);
-        // Check if sorting arguments match existing fields
-        // Diffing sortingOrder with place keys
-        $extraFields = array_diff($sortingOrder, array_keys($places[0]));
-        if (!empty($extraFields)) {
-            throw new \Exception("Invalid sorting field(s): '" . implode("', '", $extraFields) . "'", 400);
-        }
-        usort($places, $this->get('api.service.helpers')->sorter($sortingOrder));
-
-        return $places;
-
     }
 
     private function preparePlacesRequestParameters(Request $request) {

@@ -40,12 +40,31 @@ class HelpersService {
 
     }
 
+    public function sortArrayByFields($places, $fields) {
+
+        $sortingOrder = explode(",", $fields);
+        array_unique($sortingOrder);
+        // Stripping sortingOrder array from possible '-' signs
+        $sortingOrderStripped = array_map(function($elem) {return str_replace("-", "", $elem);}, $sortingOrder);
+        // Check if sorting arguments match existing fields
+        // Diffing sortingOrder with place keys
+        $extraFields = array_diff($sortingOrderStripped, array_keys($places[0]));
+        if (!empty($extraFields)) {
+            throw new \Exception("Invalid sorting field(s): '" . implode("', '", $extraFields) . "'", 400);
+        }
+        usort($places, $this->sorterGenerator($sortingOrder));
+
+        return $places;
+
+    }
+
+
     /**
      * Closure generator used to sort arrays by defined order ($sortingOrder)
      * @param array $sortingOrder Array containing sorting order (e.g. ["-rating", "distance"]
      * @return \Closure Closuer used for sorting
      */
-    public function sorter($sortingOrder) {
+    public function sorterGenerator($sortingOrder) {
         // Return closure (cannot use class method along with use() construct in usort)
         return function($elementA, $elementB) use ($sortingOrder) {
             // Keep
