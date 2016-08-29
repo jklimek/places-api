@@ -51,7 +51,7 @@ function displayError(error) {
 }
 
 function toggleIdElement(id) {
-    var element = $('#'+id);
+    var element = $('#' + id);
     if (element.css("display") == "none") {
         element.removeClass('hidden-xs');
     } else {

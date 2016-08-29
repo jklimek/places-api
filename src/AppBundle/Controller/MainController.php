@@ -8,7 +8,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use GuzzleHttp;
 use Symfony\Component\HttpFoundation\Request;
 
-class MainController extends Controller {
+class MainController extends Controller
+{
 
     /**
      * @Route("/", name="homepage")
@@ -17,7 +18,8 @@ class MainController extends Controller {
      * @return array
      * @throws \Exception
      */
-    public function indexAction(Request $request) {
+    public function indexAction(Request $request)
+    {
         $parameters = [
             "type"     => $request->get('type'),
             "radius"   => $request->get('type') ?? 2000,
@@ -25,7 +27,7 @@ class MainController extends Controller {
         ];
 
 
-        $url =  $this->getParameter("api_url") . "/api/places";
+        $url = $this->getParameter("api_url") . "/api/places";
 //        $url = "http://0.0.0.0:8888/places";
         $options = [
             "location" => str_replace("%2C", ",", $parameters["location"]), // Default location - Neptune's Fountain
@@ -35,8 +37,14 @@ class MainController extends Controller {
         ];
 
         $responseBody = $this->get('api.requests.service')->makeJsonRequest($url, $options);
+
 //        dump($responseBody);
-        return ["response" => $responseBody, "type" => $parameters["type"], "location" => $parameters["location"], "apiUrl" => $this->getParameter("api_url")];
+        return [
+            "response" => $responseBody,
+            "type"     => $parameters["type"],
+            "location" => $parameters["location"],
+            "apiUrl"   => $this->getParameter("api_url")
+        ];
     }
 
     /**
@@ -47,14 +55,15 @@ class MainController extends Controller {
      * @return array
      * @throws \Exception
      */
-    public function placeDetailsAction($placeId, Request $request) {
+    public function placeDetailsAction($placeId, Request $request)
+    {
         $parameters = [
             "type"     => $request->get('type'),
             "location" => $request->get('location') ?? "54.348538,18.653228",
         ];
 
 
-        $url =  $this->getParameter("api_url") . "/api/places/" . $placeId;
+        $url = $this->getParameter("api_url") . "/api/places/" . $placeId;
 //        $url = "http://0.0.0.0:8888/places";
         $options = [
             "location" => str_replace("%2C", ",", $parameters["location"]), // Default location - Neptune's Fountain
@@ -64,6 +73,10 @@ class MainController extends Controller {
         ];
         $responseBody = $this->get('api.requests.service')->makeJsonRequest($url, $options);
 
-        return ["place" => $responseBody, "key" => $this->getParameter("google_api_key"), "apiUrl" => $this->getParameter("api_url")];
+        return [
+            "place"  => $responseBody,
+            "key"    => $this->getParameter("google_api_key"),
+            "apiUrl" => $this->getParameter("api_url")
+        ];
     }
 }

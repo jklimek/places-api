@@ -9,7 +9,8 @@
 namespace AppBundle\Service;
 
 
-class HelpersService {
+class HelpersService
+{
 
     /**
      * Function to calculate distance between two points (latitude, longitude)
@@ -17,7 +18,8 @@ class HelpersService {
      * @param $destinationPoint
      * @return int Meters from $startingPoint to $destinationPoint
      */
-    public function calculateDistanceFromLocation($startingPoint, $destinationPoint) {
+    public function calculateDistanceFromLocation($startingPoint, $destinationPoint)
+    {
 
         list($latitudeFrom, $longitudeFrom) = explode(",", $startingPoint);
         list($latitudeTo, $longitudeTo) = explode(",", $destinationPoint);
@@ -36,16 +38,20 @@ class HelpersService {
         $b = sin($latFrom) * sin($latTo) + cos($latFrom) * cos($latTo) * cos($lonDelta);
 
         $angle = atan2(sqrt($a), $b);
+
         return round($angle * $earthRadius);
 
     }
 
-    public function sortArrayByFields($places, $fields) {
+    public function sortArrayByFields($places, $fields)
+    {
 
         $sortingOrder = explode(",", $fields);
         array_unique($sortingOrder);
         // Stripping sortingOrder array from possible '-' signs
-        $sortingOrderStripped = array_map(function($elem) {return str_replace("-", "", $elem);}, $sortingOrder);
+        $sortingOrderStripped = array_map(function ($elem) {
+            return str_replace("-", "", $elem);
+        }, $sortingOrder);
         // Check if sorting arguments match existing fields
         // Diffing sortingOrder with place keys
         $extraFields = array_diff($sortingOrderStripped, array_keys($places[0]));
@@ -64,11 +70,12 @@ class HelpersService {
      * @param array $sortingOrder Array containing sorting order (e.g. ["-rating", "distance"]
      * @return \Closure Closuer used for sorting
      */
-    public function sorterGenerator($sortingOrder) {
+    public function sorterGenerator($sortingOrder)
+    {
         // Return closure (cannot use class method along with use() construct in usort)
-        return function($elementA, $elementB) use ($sortingOrder) {
+        return function ($elementA, $elementB) use ($sortingOrder) {
             // Keep
-            while(!empty($sortingOrder)) {
+            while (!empty($sortingOrder)) {
                 $sortBy = array_shift($sortingOrder);
                 $order = 1;
                 if (substr($sortBy, 0, 1) == "-") {
@@ -81,6 +88,7 @@ class HelpersService {
                     return -$order;
                 }
             }
+
             return true;
         };
     }

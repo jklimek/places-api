@@ -16,7 +16,8 @@ use Symfony\Component\HttpFoundation\Response;
  * Rest controller for photos
  * @Route("/api")
  */
-class PhotosController extends Controller {
+class PhotosController extends Controller
+{
     /**
      *
      * Photo resource from Google Places API
@@ -42,12 +43,14 @@ class PhotosController extends Controller {
      * @param Request $request Symfony http Request object
      * @return Response Photo file stream
      */
-    public function photosAction($photoId, Request $request) {
+    public function photosAction($photoId, Request $request)
+    {
         try {
             $parameters = $this->prepareParameters($photoId, $request);
             $options = $this->prepareOptions($parameters);
 
-            $responsePhoto = $this->get('api.requests.service')->makeFileRequest($this->getParameter('google_place_photo_url'), $options);
+            $responsePhoto = $this->get('api.requests.service')->makeFileRequest($this->getParameter('google_place_photo_url'),
+                $options);
             $headers = [
                 'Content-Type' => 'image/png'
             ];
@@ -73,7 +76,8 @@ class PhotosController extends Controller {
      * @param array $parameters
      * @return array $options
      */
-    private function prepareOptions($parameters) {
+    private function prepareOptions($parameters)
+    {
         $options = [
             "photoreference" => $parameters["photoId"],
             "key"            => $parameters["key"]
@@ -96,7 +100,8 @@ class PhotosController extends Controller {
      * @param Request $request
      * @return array $parameters
      */
-    private function prepareParameters($photoId, Request $request) {
+    private function prepareParameters($photoId, Request $request)
+    {
 
         $defaults = [
             "maxWidth"  => 800,

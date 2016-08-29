@@ -17,7 +17,8 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
  * @Route("/api")
  * @Method({"GET"})
  */
-class PlacesController extends Controller {
+class PlacesController extends Controller
+{
 
     /**
      * General places resource providing information about places from Google Places API
@@ -36,7 +37,7 @@ class PlacesController extends Controller {
      *      {"name"="opennow", "dataType"="bool", "required"=false, "format"=".*", "description"="Flag for filtering only palces open at the request time"},
      *      {"name"="sort", "dataType"="string", "required"=false, "format"="-?\w+(,-?\w+)*", "description"="Parameter for sorting results. Sort parameter take in list of comma separated fields
                 (name, place_id, rating, location, price_level, opening_hours, vicinity), each with a possible unary negative (e.g. -rating) to imply descending sort order.
-           "},
+    "},
      *  }
      * )
      *
@@ -45,14 +46,16 @@ class PlacesController extends Controller {
      * @param Request $request Symfony http Request object
      * @return array
      */
-    public function placesAction(Request $request) {
+    public function placesAction(Request $request)
+    {
 
         try {
 
             // Parameters
             $parameters = $this->preparePlacesRequestParameters($request);
             $options = $this->preparePlacesRequestOptions($parameters);
-            $responseBody = $this->get('api.requests.service')->makeJsonRequest($this->getParameter('google_places_url'), $options);
+            $responseBody = $this->get('api.requests.service')->makeJsonRequest($this->getParameter('google_places_url'),
+                $options);
             $places = $this->buildPlacesArray($responseBody, $parameters);
 
             // Sort places array if requested
@@ -109,18 +112,20 @@ class PlacesController extends Controller {
      * @param Request $request Symfony http Request object
      * @return array
      */
-    public function placeDetailsAction($placeId, Request $request) {
+    public function placeDetailsAction($placeId, Request $request)
+    {
         try {
 
             $options = [
                 "placeid" => $placeId,
 //                "key"     => $this->getParameter("google_api_key"),
-                "key" => $request->get("key"),
+                "key"     => $request->get("key"),
             ];
             if (is_null($options["key"])) {
                 throw new \Exception("Missing Google Places API key", 401);
             }
-            $responseBody = $this->get('api.requests.service')->makeJsonRequest($this->getParameter('google_place_details_url'), $options);
+            $responseBody = $this->get('api.requests.service')->makeJsonRequest($this->getParameter('google_place_details_url'),
+                $options);
             $placeArray = $this->buildSinglePlaceArray($responseBody);
 
             // Build final response body
@@ -149,7 +154,8 @@ class PlacesController extends Controller {
      * @param array $responseBody
      * @return array $placeArray
      */
-    private function buildSinglePlaceArray($responseBody) {
+    private function buildSinglePlaceArray($responseBody)
+    {
         $responseResult = $responseBody["result"];
         $photos = [];
         // Generate array containing photos if they exist
@@ -192,7 +198,8 @@ class PlacesController extends Controller {
      * @param $parameters
      * @return array
      */
-    private function buildPlacesArray($responseBody, $parameters) {
+    private function buildPlacesArray($responseBody, $parameters)
+    {
         // Building places array
         $places = [];
         foreach ($responseBody["results"] as $responsePlace) {
@@ -228,7 +235,8 @@ class PlacesController extends Controller {
             // lat,long -> 54.348538,18.653228
             if (!is_null($parameters["location"]) && $place["location"]) {
                 //TODO remove implode/explode action, instead use 4 arguments
-                $place["distance"] = $this->get('api.service.helpers')->calculateDistanceFromLocation($parameters["location"], implode(",", $place["location"]));
+                $place["distance"] = $this->get('api.service.helpers')->calculateDistanceFromLocation($parameters["location"],
+                    implode(",", $place["location"]));
             }
 
             // HATEOAS link
@@ -254,7 +262,8 @@ class PlacesController extends Controller {
      * @return array
      * @throws \Exception
      */
-    private function preparePlacesRequestParameters(Request $request) {
+    private function preparePlacesRequestParameters(Request $request)
+    {
 
         $requestParameters = $request->query->all();
 
@@ -264,27 +273,27 @@ class PlacesController extends Controller {
         }
 
         $defaults = [
-            "radius"        => 2000, // Default radius - 2000m
-            "rankby"        => "prominence", // Default rank by prominence
-            "type"          => "bar", // Default type - bar
-            "location"      => "54.348538,18.653228", // Default location - Neptune's Fountain
+            "radius"          => 2000, // Default radius - 2000m
+            "rankby"          => "prominence", // Default rank by prominence
+            "type"            => "bar", // Default type - bar
+            "location"        => "54.348538,18.653228", // Default location - Neptune's Fountain
             "next_page_token" => null, // Next page token is not set as default - used to paginate
-            "name"          => null, // Query for a name search
-            "opennow"       => null, // Open fo business at the time query is sent
-            "sort"          => null, // Sorting parameters
+            "name"            => null, // Query for a name search
+            "opennow"         => null, // Open fo business at the time query is sent
+            "sort"            => null, // Sorting parameters
         ];
 
         $parameters = [
-            "radius"        => $requestParameters["radius"] ?? $defaults["radius"],
-            "rankby"        => $requestParameters["rankby"] ?? $defaults["rankby"],
-            "type"          => $requestParameters["type"] ?? $defaults["type"],
-            "location"      => $requestParameters["location"] ?? $defaults["location"],
+            "radius"          => $requestParameters["radius"] ?? $defaults["radius"],
+            "rankby"          => $requestParameters["rankby"] ?? $defaults["rankby"],
+            "type"            => $requestParameters["type"] ?? $defaults["type"],
+            "location"        => $requestParameters["location"] ?? $defaults["location"],
             "next_page_token" => $requestParameters["next_page_token"] ?? $defaults["next_page_token"],
-            "name"          => $requestParameters["name"] ?? $defaults["name"],
-            "opennow"       => $requestParameters["opennow"] ?? $defaults["opennow"],
-            "sort"          => $requestParameters["sort"] ?? $defaults["sort"],
+            "name"            => $requestParameters["name"] ?? $defaults["name"],
+            "opennow"         => $requestParameters["opennow"] ?? $defaults["opennow"],
+            "sort"            => $requestParameters["sort"] ?? $defaults["sort"],
 //            "key"           => $this->getParameter("google_api_key"),
-            "key"           => $requestParameters["key"],
+            "key"             => $requestParameters["key"],
         ];
         // Check validity of all requested parameters
         // Searching for extra parameters by diffing request parameters with defined parameters set
@@ -303,7 +312,8 @@ class PlacesController extends Controller {
      * @param $parameters
      * @return array
      */
-    private function preparePlacesRequestOptions($parameters) {
+    private function preparePlacesRequestOptions($parameters)
+    {
 
         $options = [
             "location" => $parameters["location"],

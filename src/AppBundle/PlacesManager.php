@@ -11,12 +11,14 @@ namespace AppBundle;
 
 use AppBundle\Service\Helpers;
 
-class PlacesManager {
+class PlacesManager
+{
 
     private $helpersService;
 
 
-    public function __construct(Helpers $helpersService) {
+    public function __construct(Helpers $helpersService)
+    {
 
         $this->helpersService = $helpersService;
     }

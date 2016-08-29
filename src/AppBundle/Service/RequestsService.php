@@ -7,18 +7,22 @@
  */
 
 namespace AppBundle\Service;
+
 use GuzzleHttp;
 use GuzzleHttp\Exception;
 
-class RequestsService {
+class RequestsService
+{
 
     private $client;
 
-    public function __construct(GuzzleHttp\Client $client) {
+    public function __construct(GuzzleHttp\Client $client)
+    {
         $this->client = $client;
     }
 
-    public function makeJsonRequest($url, $options) {
+    public function makeJsonRequest($url, $options)
+    {
         $responseJson = $this->httpRequest("GET", $url, $options);
         $responseBody = GuzzleHttp\json_decode($responseJson, true);
         if ($responseBody["status"] != "OK") {
@@ -32,14 +36,16 @@ class RequestsService {
         return $responseBody;
     }
 
-    public function makeFileRequest($url, $options) {
+    public function makeFileRequest($url, $options)
+    {
 
         $responseFile = $this->httpRequest("GET", $url, $options);
 
         return $responseFile;
     }
 
-    private function httpRequest($method, $url, $options) {
+    private function httpRequest($method, $url, $options)
+    {
         try {
             $responseFile = $this->client
                 ->request($method, $url, ["query" => $options])

@@ -19,7 +19,8 @@ class CustomExceptionController extends ExceptionController
      * @param DebugLoggerInterface|null $logger
      * @return JsonResponse
      */
-    public function showAction(Request $request, FlattenException $exception, DebugLoggerInterface $logger = null) {
+    public function showAction(Request $request, FlattenException $exception, DebugLoggerInterface $logger = null)
+    {
 
         $code = $exception->getStatusCode();
 
